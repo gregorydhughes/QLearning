@@ -29,13 +29,13 @@
     <ClInclude Include="LocRec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PerceptRec.h">
+    <ClInclude Include="EnvironmentClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OldStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TileRec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnvironmentClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

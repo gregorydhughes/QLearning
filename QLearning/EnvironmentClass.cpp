@@ -44,97 +44,39 @@ void EnvironmentClass::BuildRoom(int size)
 	}
 }
 
-PerceptRec EnvironmentClass::GetLocationInformation(LocRec loc)
+TileRec EnvironmentClass::GetLocationInformation(LocRec loc)
 {
-	PerceptRec ans;
-
-	// Check Touch
-	if (room[loc.row][loc.col].hasTroll || !room[loc.row][loc.col].isValid)
-		ans.touch = 1;
-	else
-		ans.touch = 0;
-
-	// Check under
-	if (room[loc.row][loc.col].hasPony)
-		ans.dUnder = 1;
-	else
-		ans.dUnder = 0;
-
-	if (room[loc.row][loc.col].isEscape)
-		ans.gUnder = 1;
-	else
-		ans.gUnder = 0;
-
-	// Check front
-	if (room[loc.row + 1][loc.col].hasPony)
-		ans.dNorth = 1;
-	else
-		ans.dNorth = 0;
-
-	if (room[loc.row + 1][loc.col].isEscape)
-		ans.gNorth = 1;
-	else
-		ans.gNorth = 0;
-
-	// Check Back
-	if (room[loc.row - 1][loc.col].hasPony)
-		ans.dSouth = 1;
-	else
-		ans.dSouth = 0;
-
-	if (room[loc.row - 1][loc.col].isEscape)
-		ans.gSouth = 1;
-	else
-		ans.gSouth = 0;
-
-	// Check Left
-	if (room[loc.row][loc.col - 1].hasPony)
-		ans.dWest = 1;
-	else
-		ans.dWest = 0;
-
-	if (room[loc.row][loc.col - 1].isEscape)
-		ans.gWest = 1;
-	else
-		ans.gWest = 0;
-
-	// Check Right
-	if (room[loc.row][loc.col + 1].hasPony)
-		ans.dEast = 1;
-	else
-		ans.dEast = 0;
-
-	if (room[loc.row][loc.col + 1].isEscape)
-		ans.gEast = 1;
-	else
-		ans.gEast = 0;
-
-	return ans;
+	return room[loc.rowY][loc.colX];
 }
 
 void EnvironmentClass::FreePony(LocRec loc)
 {
-	room[loc.row][loc.col].hasPony = false;
+	room[loc.rowY][loc.colX].hasPony = false;
 }
 
 void EnvironmentClass::SetPonyOnLocation(LocRec loc)
 {
-	room[loc.row][loc.col].hasPony = true;
+	room[loc.rowY][loc.colX].hasPony = true;
 }
 
 void EnvironmentClass::SetTrollOnLocation(LocRec loc)
 {
-	room[loc.row][loc.col].hasTroll = true;
+	room[loc.rowY][loc.colX].hasTroll = true;
 }
 
 void EnvironmentClass::SetEscapeOnLocation(LocRec loc)
 {
-	room[loc.row][loc.col].isEscape = true;
+	room[loc.rowY][loc.colX].isEscape = true;
 }
 
 void EnvironmentClass::SetObstructionOnLocation(LocRec loc)
 {
-	room[loc.row][loc.col].isObstructed = true;
+	room[loc.rowY][loc.colX].isObstructed = true;
+}
+
+bool EnvironmentClass::IsTileValid(LocRec loc)
+{
+	return room[loc.rowY][loc.colX].isValid;
 }
 
 int EnvironmentClass::GetRoomSize()
@@ -144,17 +86,17 @@ int EnvironmentClass::GetRoomSize()
 
 int EnvironmentClass::ReturnReward(LocRec loc)
 {
-	if (room[loc.row][loc.col].hasPony)
+	if (room[loc.rowY][loc.colX].hasPony)
 		return REWARD_FOR_PONY;
-	else if (room[loc.row][loc.col].hasTroll)
+	else if (room[loc.rowY][loc.colX].hasTroll)
 		return REWARD_FOR_TROLL;
-	else if (room[loc.row][loc.col].isEscape)
+	else if (room[loc.rowY][loc.colX].isEscape)
 		return REWARD_FOR_ESCAPE;
 	else
 		return REWARD_FOR_MOVE;
 }
 
-std::string EnvironmentClass::GetRoomString(LocRec currLoc, Direction dir)
+std::string EnvironmentClass::ToString(LocRec currLoc)
 {
 	std::string ans = "";
 
@@ -168,32 +110,77 @@ std::string EnvironmentClass::GetRoomString(LocRec currLoc, Direction dir)
 		for (int j = 1; j <= environmentSize; j++)
 		{
 			if (room[i][j].hasPony)
-				ans = ans + "#";
+				ans = ans + "P";
 
 			else if (room[i][j].hasTroll)
-				ans = ans + "X";
+				ans = ans + "T";
 
 			else if (room[i][j].isEscape)
-				ans = ans + "$";
+				ans = ans + "E";
 
-			else if (currLoc.row == i && currLoc.col == j)
-			{
-				switch (dir)
-				{
-				case TRUE_NORTH:
-				case TRUE_SOUTH:
-				case TRUE_EAST:
-				case TRUE_WEST:
-				case NORTH_EAST:
-				case NORTH_WEST:
-				case SOUTH_EAST:
-				case SOUTH_WEST:
-				default:
+			else if (currLoc.rowY == i && currLoc.colX == j)
 					ans = ans + "B";
-					break;
-				}
 
+			else
+				ans = ans + " ";
+
+			// add space after each
+			if (j != environmentSize)
+				ans = ans + " ";
+		}
+
+		ans = ans + "|\n";
+
+		if (i != 1)
+		{
+			for (int j = 0; j <= environmentSize; j++)
+			{
+				ans = ans + "+";
+
+				if (j != environmentSize)
+					ans = ans + " ";
 			}
+
+			ans = ans + "\n";
+		}
+	}
+
+	// Print bottom wall
+	ans = ans + GetTopAndBottomWalls() + "\n";
+
+	return ans;
+}
+
+std::string EnvironmentClass::ToString(vector<LocRec> path)
+{
+	std::string ans = "";
+
+	// Print top wall
+	ans += GetTopAndBottomWalls() + "\n";
+
+	for (int i = environmentSize; i > 0; i--)
+	{
+		ans += "|";
+
+		for (int j = 1; j <= environmentSize; j++)
+		{
+			LocRec temp;
+
+			temp.colX = j;
+			temp.rowY = i;
+
+			if (LocationInVector(temp, path))
+				ans = ans + "X";
+		
+			else if (room[i][j].hasPony)
+				ans = ans + "P";
+
+			else if (room[i][j].hasTroll)
+				ans = ans + "T";
+
+			else if (room[i][j].isEscape)
+				ans = ans + "E";
+
 			else
 				ans = ans + " ";
 
@@ -234,4 +221,13 @@ std::string EnvironmentClass::GetTopAndBottomWalls()
 	ans = ans + "+";
 
 	return ans;
+}
+
+bool EnvironmentClass::LocationInVector(LocRec pos, vector<LocRec> path)
+{
+	for (int i = 0; i < path.size(); i++)
+		if (pos == path[i])
+			return true;
+
+	return false;
 }

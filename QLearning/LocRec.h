@@ -9,6 +9,8 @@
 #ifndef LOCREC_H
 #define LOCREC_H
 
+const int MAX_DIRECTIONS = 8;
+
 // establishes the direction of the vBot
 enum Direction
 {
@@ -25,8 +27,16 @@ enum Direction
 // Structure to hold a 2-d location in room(2d array)
 struct LocRec
 {
-	int row;		// Row location
-	int col;		// Col location
+	int rowY;		// Row location
+	int colX;		// Col location
+
+	bool operator==(const LocRec & rtOp) const
+	{
+		if (rowY == rtOp.rowY && colX == rtOp.colX)
+			return true;
+
+		return false;
+	}
 };
 
 #endif // !LOCREC_H
