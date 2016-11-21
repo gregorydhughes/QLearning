@@ -33,6 +33,9 @@ public:
 	// Returns the percepts to the vBot on location
 	TileRec GetLocationInformation(LocRec loc);
 
+	// Returns the value for a move on location
+	int GetValueOnLocation(LocRec loc);
+
 	// vacuums a tile
 	void FreePony(LocRec loc);
 

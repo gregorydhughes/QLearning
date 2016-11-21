@@ -44,6 +44,8 @@ int main()
 
 	for (int i = 0; i < EPOCHS; i++)
 	{
+		int reward = 0;
+
 		vector<LocRec>::iterator it = path.begin();
 
 		currLoc = EstablishStartingLocation(ec);
@@ -52,7 +54,10 @@ int main()
 		{
 			//dout << ec.ToString(currLoc);
 			MoveCurrentLocation(ec, currLoc, path, it);
+			reward += ec.GetValueOnLocation(currLoc);
 		}
+
+		dout << "Reward: " << reward << endl;
 
 		dout << ec.ToString(path);
 

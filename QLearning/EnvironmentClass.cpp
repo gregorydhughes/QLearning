@@ -49,6 +49,18 @@ TileRec EnvironmentClass::GetLocationInformation(LocRec loc)
 	return room[loc.rowY][loc.colX];
 }
 
+int EnvironmentClass::GetValueOnLocation(LocRec loc)
+{
+	if (room[loc.rowY][loc.colX].hasPony)
+		return REWARD_FOR_PONY;
+	else if (room[loc.rowY][loc.colX].hasTroll)
+		return REWARD_FOR_TROLL;
+	else if (room[loc.rowY][loc.colX].isEscape)
+		return REWARD_FOR_ESCAPE;
+	else
+		return REWARD_FOR_MOVE;
+}
+
 void EnvironmentClass::FreePony(LocRec loc)
 {
 	room[loc.rowY][loc.colX].hasPony = false;
