@@ -50,7 +50,7 @@ int main()
 
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
 		{
-			dout << ec.ToString(currLoc);
+			//dout << ec.ToString(currLoc);
 			MoveCurrentLocation(ec, currLoc, path, it);
 		}
 
