@@ -54,7 +54,7 @@ int main()
 
 	firstMove(ec, path, it);
 
-	for (int i = 0; i < EPOCHS; i++)
+	for (int i = 1; i < EPOCHS; i++)
 	{
 		int reward = 0;
 
