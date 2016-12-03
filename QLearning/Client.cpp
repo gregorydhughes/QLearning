@@ -53,6 +53,10 @@ int main()
 
 	for (int i = 0; i < EPOCHS; i++)
 	{
+		EnvironmentClass ec;
+
+		ReadFile(ec);
+
 		int reward = 0;
 
 		vector<LocRec>::iterator it = path.begin();
@@ -71,7 +75,7 @@ int main()
 		cout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
-		//system("pause");
+		system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();
