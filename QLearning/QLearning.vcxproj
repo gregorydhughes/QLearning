@@ -154,7 +154,7 @@
     <ClInclude Include="LocRec.h" />
     <ClInclude Include="TileRec.h" />
     <ClInclude Include="EnvironmentClass.h" />
-    <ClInclude Include="OldStruct.h" />
+    <ClInclude Include="QValueRec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

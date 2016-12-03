@@ -32,10 +32,10 @@
     <ClInclude Include="EnvironmentClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OldStruct.h">
+    <ClInclude Include="TileRec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TileRec.h">
+    <ClInclude Include="QValueRec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

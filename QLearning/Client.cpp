@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include "EnvironmentClass.h"
+#include "QValueRec.h"
 #include <cstdlib>
 #include <ctime>
 
