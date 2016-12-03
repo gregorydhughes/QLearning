@@ -168,6 +168,10 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	{
 		temp = curr;
 
+		QValRec currValues = ec.ReturnNeighboringQValues(temp);
+
+
+		
 		// get a new direction
 		Direction dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
 
@@ -205,4 +209,21 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	} while (!ec.IsTileValid(temp));
 
 	curr = temp;
+}
+
+void calculateQLearnValues(QValRec currValues) {
+	currValues.north = calculateQLearnValue(currValues.north);
+	currValues.south = calculateQLearnValue(currValues.south);
+	currValues.east = calculateQLearnValue(currValues.east);
+	currValues.west = calculateQLearnValue(currValues.west);
+	currValues.southEast = calculateQLearnValue(currValues.southEast);
+	currValues.southWest = calculateQLearnValue(currValues.southWest);
+	currValues.norhtEast = calculateQLearnValue(currValues.norhtEast);
+	currValues.northWest = calculateQLearnValue(currValues.northWest);
+}
+
+double calculateQLearnValue(double dir) {
+	
+
+
 }
