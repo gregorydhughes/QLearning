@@ -37,6 +37,9 @@ public:
 	// Returns the value for a move on location
 	int GetValueOnLocation(LocRec loc);
 
+	// Predicates if there is a pony on location
+	bool HasPony(LocRec loc);
+
 	// vacuums a tile
 	void FreePony(LocRec loc);
 

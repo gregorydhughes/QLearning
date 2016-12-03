@@ -61,6 +61,13 @@ int EnvironmentClass::GetValueOnLocation(LocRec loc)
 		return REWARD_FOR_MOVE;
 }
 
+bool EnvironmentClass::HasPony(LocRec loc)
+{
+	if (room[loc.rowY][loc.colX].hasPony)
+		return true;
+	return false;
+}
+
 void EnvironmentClass::FreePony(LocRec loc)
 {
 	room[loc.rowY][loc.colX].hasPony = false;
