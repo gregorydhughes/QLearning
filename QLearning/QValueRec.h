@@ -34,16 +34,6 @@ struct QValueRec
 	double QSouthWest;			
 	double QWest;				
 	double QNorthWest;
-
-	// The max q values
-	double QNorthMax;
-	double QNorthEastMax;
-	double QEastMax;
-	double QSouthEastMax;
-	double QSouthMax;
-	double QSouthWestMax;
-	double QWestMax;
-	double QNorthWestMax;
 };
 
 #endif // !TILEREC_H
