@@ -13,7 +13,7 @@
 struct QValRec
 {
 	double north;				// Q-Value for moving North
-	double norhtEast;			// Q-Value for moving North East
+	double northEast;			// Q-Value for moving North East
 	double east;				// Q-Value for moving East
 	double southEast;			// Q-Value for moving South East
 	double south;				// Q-Value for moving South

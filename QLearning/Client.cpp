@@ -218,7 +218,7 @@ void calculateQLearnValues(QValRec currValues) {
 	currValues.west = calculateQLearnValue(currValues.west);
 	currValues.southEast = calculateQLearnValue(currValues.southEast);
 	currValues.southWest = calculateQLearnValue(currValues.southWest);
-	currValues.norhtEast = calculateQLearnValue(currValues.norhtEast);
+	currValues.northEast = calculateQLearnValue(currValues.northEast);
 	currValues.northWest = calculateQLearnValue(currValues.northWest);
 }
 

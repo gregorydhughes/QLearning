@@ -140,7 +140,7 @@ QValRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
 	northWest.colX = loc.colX - 1;
 	
 	ans.north = ReturnReward(north);
-	ans.norhtEast = ReturnReward(northEast);
+	ans.northEast = ReturnReward(northEast);
 	ans.east = ReturnReward(east);
 	ans.southEast = ReturnReward(southEast);
 	ans.south = ReturnReward(south);
