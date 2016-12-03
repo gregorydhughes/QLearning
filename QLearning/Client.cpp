@@ -179,6 +179,9 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 
 	LocRec temp = curr;
 
+	if (ec.HasPony(temp))
+		ec.FreePony(temp);
+
 	do {
 		temp = curr;
 		RewardsRec currRewards = ec.ReturnNeighboringQValues(temp);
