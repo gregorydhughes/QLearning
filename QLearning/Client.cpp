@@ -21,6 +21,16 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec);
 
 void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
 
+void calculateQLearnValues(RewardsRec currValues, QValueRec &currState);
+
+Direction getDirection(QValueRec currState);
+
+double calculateQLearnValue(double qVal, double qMax, double reward);
+
+void MoveCurrentLocationFirst(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
+
+void firstMove(EnvironmentClass & ec, vector<LocRec> & path, vector<LocRec>::iterator & it);
+
 int main()
 {
 	EnvironmentClass ec;
@@ -42,6 +52,8 @@ int main()
 	vector<LocRec> path = vector<LocRec>();
 	vector<LocRec>::iterator it = path.begin();
 
+	firstMove(ec, path, it);
+
 	for (int i = 0; i < EPOCHS; i++)
 	{
 		int reward = 0;
@@ -54,6 +66,8 @@ int main()
 		{
 			//dout << ec.ToString(currLoc);
 			MoveCurrentLocation(ec, currLoc, path, it);
+			cout << ec.ToString(path);
+			system("pause");
 			reward += ec.GetValueOnLocation(currLoc);
 		}
 
@@ -70,6 +84,7 @@ int main()
 
 	return 0;
 }
+
 
 void ReadFile(EnvironmentClass & ec)
 {
@@ -156,6 +171,71 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 	ans.rowY = (rand() % s) + 1;
 
 	return ans;
+}
+
+void firstMove(EnvironmentClass & ec, vector<LocRec> & path, vector<LocRec>::iterator & it) {
+	int reward = 0;
+
+	LocRec currLoc = EstablishStartingLocation(ec);
+
+	while (ec.GetLocationInformation(currLoc).isEscape == false)
+	{
+		//dout << ec.ToString(currLoc);
+		MoveCurrentLocationFirst(ec, currLoc, path, it);
+		cout << ec.ToString(path);
+		system("pause");
+		reward += ec.GetValueOnLocation(currLoc);
+	}
+
+	path.clear();
+
+}
+
+void MoveCurrentLocationFirst(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it) {
+	path.push_back(curr);
+
+	LocRec temp = curr;
+
+	do {
+		temp = curr;
+		
+		// get a new direction
+		Direction dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
+
+		switch (dir)
+		{
+		case TRUE_NORTH:
+			temp.rowY += 1;
+			break;
+		case TRUE_SOUTH:
+			temp.rowY -= 1;
+			break;
+		case TRUE_EAST:
+			temp.colX += 1;
+			break;
+		case TRUE_WEST:
+			temp.colX -= 1;
+			break;
+		case NORTH_EAST:
+			temp.colX += 1;
+			temp.rowY += 1;
+			break;
+		case NORTH_WEST:
+			temp.colX -= 1;
+			temp.rowY += 1;
+			break;
+		case SOUTH_EAST:
+			temp.colX += 1;
+			temp.rowY -= 1;
+			break;
+		case SOUTH_WEST:
+			temp.colX -= 1;
+			temp.rowY -= 1;
+			break;
+		}
+	} while (!ec.IsTileValid(temp));
+
+	curr = temp;
 }
 
 QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
