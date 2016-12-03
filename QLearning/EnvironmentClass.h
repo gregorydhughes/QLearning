@@ -8,6 +8,7 @@
 
 #include "LocRec.h"
 #include "TileRec.h"
+#include "QValueRec.h"
 #include "ExceptionClass.h"
 #include <string>
 #include <vector>
@@ -57,6 +58,8 @@ public:
 	int GetRoomSize();
 
 	int ReturnReward(LocRec loc);
+
+	QValRec ReturnNeighboringQValues(LocRec loc);
 
 	std::string ToString(LocRec currLoc);
 

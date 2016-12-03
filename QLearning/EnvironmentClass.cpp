@@ -108,6 +108,48 @@ int EnvironmentClass::ReturnReward(LocRec loc)
 		return REWARD_FOR_MOVE;
 }
 
+QValRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
+{
+	QValRec ans;
+
+	// check north
+	LocRec north, northEast, northWest, east, west, southEast, southWest, south;
+
+	north.colX = loc.colX;
+	north.rowY = loc.rowY + 1;
+
+	northEast.rowY = loc.rowY + 1;
+	northEast.colX = loc.colX + 1;
+
+	east.colX = loc.colX + 1;
+	east.rowY = loc.rowY;
+
+	southEast.colX = loc.colX + 1;
+	southEast.rowY = loc.rowY - 1;
+
+	south.colX = loc.colX;
+	south.rowY = loc.rowY - 1;
+
+	southWest.rowY = loc.rowY - 1;
+	southWest.colX = loc.colX - 1;
+
+	west.colX = loc.colX - 1;
+	west.rowY = loc.rowY;
+	
+	northWest.rowY = loc.rowY + 1;
+	northWest.colX = loc.colX - 1;
+	
+	ans.north = ReturnReward(north);
+	ans.norhtEast = ReturnReward(northEast);
+	ans.east = ReturnReward(east);
+	ans.southEast = ReturnReward(southEast);
+	ans.south = ReturnReward(south);
+	ans.southWest = ReturnReward(southWest);
+	ans.west = ReturnReward(west);
+
+	return ans;
+}
+
 std::string EnvironmentClass::ToString(LocRec currLoc)
 {
 	std::string ans = "";
