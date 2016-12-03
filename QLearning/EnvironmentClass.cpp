@@ -108,9 +108,9 @@ int EnvironmentClass::ReturnReward(LocRec loc)
 		return REWARD_FOR_MOVE;
 }
 
-QValRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
+RewardsRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
 {
-	QValRec ans;
+	RewardsRec ans;
 
 	// check rNorth
 	LocRec rNorth, rNorthEast, rNorthWest, rEast, rWest, rSouthEast, rSouthWest, rSouth;

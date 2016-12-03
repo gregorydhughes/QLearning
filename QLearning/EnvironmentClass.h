@@ -59,7 +59,7 @@ public:
 
 	int ReturnReward(LocRec loc);
 
-	QValRec ReturnNeighboringQValues(LocRec loc);
+	RewardsRec ReturnNeighboringQValues(LocRec loc);
 
 	std::string ToString(LocRec currLoc);
 

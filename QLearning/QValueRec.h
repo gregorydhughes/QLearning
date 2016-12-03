@@ -10,7 +10,7 @@
 #define TILEREC_H
 
 // Details pertaining to each of the tiles in the room
-struct QValRec
+struct RewardsRec
 {
 	double rNorth;				// Reward Value for moving North
 	double rNorthEast;			// Reward Value for moving North East
@@ -20,6 +20,30 @@ struct QValRec
 	double rSouthWest;			// Reward Value for moving South West
 	double rWest;				// Reward Value for moving rWest
 	double rNorthWest;			// Reward Value for moving North West
+};
+
+
+struct QValueRec
+{
+	// The curret Q Values
+	double QNorth;				
+	double QNorthEast;			
+	double QEast;				
+	double QSouthEast;			
+	double QSouth;				
+	double QSouthWest;			
+	double QWest;				
+	double QNorthWest;
+
+	// The max q values
+	double QNorthMax;
+	double QNorthEastMax;
+	double QEastMax;
+	double QSouthEastMax;
+	double QSouthMax;
+	double QSouthWestMax;
+	double QWestMax;
+	double QNorthWestMax;
 };
 
 #endif // !TILEREC_H
