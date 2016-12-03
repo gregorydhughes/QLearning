@@ -10,7 +10,7 @@ using namespace std;
 
 const double ALPHA = 0.5;
 const double GAMMA = 0.9;
-const int EPOCHS = 1;
+const int EPOCHS = 10000;
 
 const int MAX_LOCATIONS = 400;
 
@@ -78,7 +78,6 @@ int main()
 		{			
 			MoveCurrentLocation(ec, currLoc, path, it);
 			reward += ec.GetValueOnLocation(currLoc);
-			cout << ec.ToString(currLoc);
 		}
 
 		dout << "Reward: " << reward << endl;
@@ -353,7 +352,7 @@ Direction getDirectionPGreedy(QValueRec * currState) {
 	for (int i = 0; i < 8; i++)
 		sum += values[i];
 
-	if (sum == 0.0)
+	if (sum <= 1.0)
 		return static_cast<Direction>(rand() % MAX_DIRECTIONS);
 	
 	double prob = 0.0;
@@ -364,6 +363,11 @@ Direction getDirectionPGreedy(QValueRec * currState) {
 
 	double runningSum = 0.0;	
 	for (int i = 0; i < 8; i++) {
+		if (values[i] == 0.0)
+			if (rand() % 10 == 0) {
+				result = i;
+				break;
+			}
 		if (prob > runningSum && prob <= (runningSum + values[i])) {
 			result = i;
 			break;
@@ -422,14 +426,6 @@ void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, Directio
 		currState->QNorthWest = calculateQLearnValue(currState->QNorthWest, maxQ, currValues.rNorthWest);
 		break;
 	}
-
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			cout << "South: " << qStates[i][j]->QSouth << " ";
-		}
-		cout << endl;
-	}
-
 }
 
 double getMaxQ(QValueRec *currState) {
