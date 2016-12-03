@@ -75,7 +75,7 @@ int main()
 		cout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
-		system("pause");
+		//system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();

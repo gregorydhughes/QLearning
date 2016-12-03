@@ -153,6 +153,7 @@ RewardsRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
 	ans.rSouth = ReturnReward(rSouth);
 	ans.rSouthWest = ReturnReward(rSouthWest);
 	ans.rWest = ReturnReward(rWest);
+	ans.rNorthWest = ReturnReward(rNorthWest);
 
 	return ans;
 }
