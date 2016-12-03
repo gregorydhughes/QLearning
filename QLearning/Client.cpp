@@ -4,12 +4,13 @@
 #include "EnvironmentClass.h"
 #include <cstdlib>
 #include <ctime>
+#include <math.h>
 
 using namespace std;
 
 const double ALPHA = 0.75;
 const double GAMMA = 0.5;
-const int EPOCHS = 1; // = 10000;
+const int EPOCHS = 10000;
 
 const int MAX_LOCATIONS = 400;
 
@@ -26,10 +27,6 @@ void calculateQLearnValues(RewardsRec currValues, QValueRec &currState);
 Direction getDirection(QValueRec currState);
 
 double calculateQLearnValue(double qVal, double qMax, double reward);
-
-void MoveCurrentLocationFirst(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
-
-void firstMove(EnvironmentClass & ec, vector<LocRec> & path, vector<LocRec>::iterator & it);
 
 int main()
 {
@@ -52,9 +49,9 @@ int main()
 	vector<LocRec> path = vector<LocRec>();
 	vector<LocRec>::iterator it = path.begin();
 
-	firstMove(ec, path, it);
+	//firstMove(ec, path, it);
 
-	for (int i = 1; i < EPOCHS; i++)
+	for (int i = 0; i < EPOCHS; i++)
 	{
 		int reward = 0;
 
@@ -66,15 +63,15 @@ int main()
 		{
 			//dout << ec.ToString(currLoc);
 			MoveCurrentLocation(ec, currLoc, path, it);
-			cout << ec.ToString(path);
-			system("pause");
+			
 			reward += ec.GetValueOnLocation(currLoc);
 		}
 
 		dout << "Reward: " << reward << endl;
-
+		cout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
-
+		cout << ec.ToString(path);
+		//system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();
@@ -173,70 +170,6 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 	return ans;
 }
 
-void firstMove(EnvironmentClass & ec, vector<LocRec> & path, vector<LocRec>::iterator & it) {
-	int reward = 0;
-
-	LocRec currLoc = EstablishStartingLocation(ec);
-
-	while (ec.GetLocationInformation(currLoc).isEscape == false)
-	{
-		//dout << ec.ToString(currLoc);
-		MoveCurrentLocationFirst(ec, currLoc, path, it);
-		cout << ec.ToString(path);
-		system("pause");
-		reward += ec.GetValueOnLocation(currLoc);
-	}
-
-	path.clear();
-
-}
-
-void MoveCurrentLocationFirst(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it) {
-	path.push_back(curr);
-
-	LocRec temp = curr;
-
-	do {
-		temp = curr;
-		
-		// get a new direction
-		Direction dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
-
-		switch (dir)
-		{
-		case TRUE_NORTH:
-			temp.rowY += 1;
-			break;
-		case TRUE_SOUTH:
-			temp.rowY -= 1;
-			break;
-		case TRUE_EAST:
-			temp.colX += 1;
-			break;
-		case TRUE_WEST:
-			temp.colX -= 1;
-			break;
-		case NORTH_EAST:
-			temp.colX += 1;
-			temp.rowY += 1;
-			break;
-		case NORTH_WEST:
-			temp.colX -= 1;
-			temp.rowY += 1;
-			break;
-		case SOUTH_EAST:
-			temp.colX += 1;
-			temp.rowY -= 1;
-			break;
-		case SOUTH_WEST:
-			temp.colX -= 1;
-			temp.rowY -= 1;
-			break;
-		}
-	} while (!ec.IsTileValid(temp));
-
-	curr = temp;
-}
 
 QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
 
@@ -248,7 +181,6 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 
 	do {
 		temp = curr;
-
 		RewardsRec currRewards = ec.ReturnNeighboringQValues(temp);
 		QValueRec currState = qStates[temp.rowY][temp.colX];
 		
@@ -290,6 +222,7 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		}		
 	} while (!ec.IsTileValid(temp));
 
+
 	curr = temp;
 }
 
@@ -305,15 +238,29 @@ Direction getDirection(QValueRec currState) {
 						currState.QSouthEast
 	};
 	
-	int location = 0;
+	double sum = 0.0;
 	for (int i = 0; i < 8; i++)
-		if (values[location] < values[i])
-			location = i;
+		sum += values[i];
 
-	if (values[location] == 0.0)
+	if (sum == 0.0)
 		return static_cast<Direction>(rand() % MAX_DIRECTIONS);
+	
+	double prob = fmod((double)rand(), sum + (sum / 10.0));
+	if (prob == 0.0 || prob > sum)
+		return static_cast<Direction>(rand() % MAX_DIRECTIONS);
+	
+	int result;	
+	double runningSum = 0.0;
 
-	switch (location) {
+	for (int i = 0; i < 8; i++) {
+		if (prob > runningSum && prob <= runningSum + values[i]) {
+			result = i;
+			break;
+		}
+		runningSum += values[i];
+	}
+
+	switch (result) {
 	case 0: return TRUE_NORTH;		
 		break;
 	case 1: return TRUE_SOUTH;
