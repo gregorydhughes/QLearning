@@ -12,14 +12,23 @@
 // Details pertaining to each of the tiles in the room
 struct QValRec
 {
-	double north;				// Q-Value for moving North
-	double northEast;			// Q-Value for moving North East
-	double east;				// Q-Value for moving East
-	double southEast;			// Q-Value for moving South East
-	double south;				// Q-Value for moving South
-	double southWest;			// Q-Value for moving South West
-	double west;				// Q-Value for moving west
-	double northWest;			// Q-Value for moving North West
+	double rNorth;				// Q-Value for moving North
+	double rNorthEast;			// Q-Value for moving North East
+	double rEast;				// Q-Value for moving East
+	double rSouthEast;			// Q-Value for moving South East
+	double rSouth;				// Q-Value for moving South
+	double rSouthWest;			// Q-Value for moving South West
+	double rWest;				// Q-Value for moving rWest
+	double rNorthWest;			// Q-Value for moving North West
+
+	double qNorth;				// Q-Value for moving North
+	double qNorthEast;			// Q-Value for moving North East
+	double qEast;				// Q-Value for moving East
+	double qSouthEast;			// Q-Value for moving South East
+	double qSouth;				// Q-Value for moving South
+	double qSouthWest;			// Q-Value for moving South West
+	double qWest;				// Q-Value for moving rWest
+	double qNorthWest;			// Q-Value for moving North West
 };
 
 #endif // !TILEREC_H

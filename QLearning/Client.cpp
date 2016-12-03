@@ -213,18 +213,18 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 
 void calculateQLearnValues(QValRec currValues) {
 	double sum = sumRewards(currValues);
-	currValues.north     = calculateQLearnValue(currValues.north, sum);
-	currValues.south     = calculateQLearnValue(currValues.south, sum);
-	currValues.east      = calculateQLearnValue(currValues.east, sum);
-	currValues.west      = calculateQLearnValue(currValues.west, sum);
-	currValues.southEast = calculateQLearnValue(currValues.southEast, sum);
-	currValues.southWest = calculateQLearnValue(currValues.southWest, sum);
-	currValues.northEast = calculateQLearnValue(currValues.northEast, sum);
-	currValues.northWest = calculateQLearnValue(currValues.northWest, sum);
+	currValues.rNorth     = calculateQLearnValue(currValues.rNorth, sum);
+	currValues.rSouth     = calculateQLearnValue(currValues.rSouth, sum);
+	currValues.rEast      = calculateQLearnValue(currValues.rEast, sum);
+	currValues.rWest      = calculateQLearnValue(currValues.rWest, sum);
+	currValues.rSouthEast = calculateQLearnValue(currValues.rSouthEast, sum);
+	currValues.rSouthWest = calculateQLearnValue(currValues.rSouthWest, sum);
+	currValues.rNorthEast = calculateQLearnValue(currValues.rNorthEast, sum);
+	currValues.rNorthWest = calculateQLearnValue(currValues.rNorthWest, sum);
 }
 
 double sumRewards(QValRec currValues) {
-	return currValues.north + currValues.south + currValues.east + currValues.west + currValues.southEast + currValues.southWest + currValues.northEast + currValues.northWest;
+	return currValues.rNorth + currValues.rSouth + currValues.rEast + currValues.rWest + currValues.rSouthEast + currValues.rSouthWest + currValues.rNorthEast + currValues.rNorthWest;
 }
 
 double calculateQLearnValue(double reward, double sum) {
