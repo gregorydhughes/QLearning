@@ -36,8 +36,6 @@ void initQStates();
 
 Direction getDirectionGreedy(QValueRec * currState, LocRec temp);
 
-
-
 int main()
 {
 	EnvironmentClass ec;
