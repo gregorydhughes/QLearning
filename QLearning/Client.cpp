@@ -158,7 +158,7 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 	return ans;
 }
 
-QValueRec qStates[20][20];
+QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
 
 void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it)
 {
@@ -166,8 +166,7 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 
 	LocRec temp = curr;
 
-	do
-	{
+	do {
 		temp = curr;
 
 		RewardsRec currRewards = ec.ReturnNeighboringQValues(temp);
@@ -230,6 +229,9 @@ Direction getDirection(QValueRec currState) {
 	for (int i = 0; i < 8; i++)
 		if (values[location] < values[i])
 			location = i;
+
+	if (values[location] == 0.0)
+		return static_cast<Direction>(rand() % MAX_DIRECTIONS);
 
 	switch (location) {
 	case 0: return TRUE_NORTH;		
