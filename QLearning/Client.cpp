@@ -5,11 +5,12 @@
 #include <cstdlib>
 #include <ctime>
 #include <math.h>
+#include <sstream>
 
 using namespace std;
 
 const double EXPLORE = 0.2;
-const double ALPHA = 0.9;
+const double ALPHA = 0.1;
 const double GAMMA = 0.5;
 const int EPOCHS = 10000;
 
@@ -40,6 +41,8 @@ LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec c
 LocRec getNewLoc(LocRec temp, Direction dir);
 
 double getSumQ(QValueRec *currState);
+
+int stringToInt(string s);
 
 int main()
 {
@@ -92,7 +95,6 @@ int main()
 
 	for (int i = 0; i < 1; i++)
 	{
-		system("pause");
 		EnvironmentClass ec;
 		ALGORITHM = "GREEDY";
 		ReadFile(ec);
@@ -117,13 +119,18 @@ int main()
 
 		path.clear();
 	}
-
-	system("pause");
 	dout.close();
 
 	return 0;
 }
 
+
+int stringToInt(string s) {
+    std::stringstream ss(s);
+    int x;
+    ss >> x;
+    return x;
+}
 
 void ReadFile(EnvironmentClass & ec)
 {
@@ -174,13 +181,13 @@ void ReadFile(EnvironmentClass & ec)
 
 			if (numbersFound % 2 == 0)
 			{
-				temp.rowY = stoi(num);
+				temp.rowY = stringToInt(num);
 
 				if (temp.rowY != -1 && temp.colX != -1)
 					ec.SetObstructionOnLocation(temp);
 			}
 			else
-				temp.colX = stoi(num);
+				temp.colX = stringToInt(num);
 
 			num = "";
 		}
@@ -262,9 +269,6 @@ LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec c
 		currState->QSouthWest,
 		currState->QSouthEast
 	};
-
-	if (rand() % 100 == 0)
-		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 
 	int max = 0;
 	for (int i = 0; i < 8; i++)
