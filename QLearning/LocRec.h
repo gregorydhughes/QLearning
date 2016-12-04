@@ -16,12 +16,12 @@ enum Direction
 {
 	TRUE_NORTH,		// vBot is looking North
 	TRUE_SOUTH,		// vBot is looking South
-	TRUE_EAST,		// vBot is looking East
 	TRUE_WEST,		// vBot is looking West
-	NORTH_EAST,		// vBot is looking North East
+	TRUE_EAST,		// vBot is looking East	
 	NORTH_WEST,		// vBot is looking North West
-	SOUTH_EAST,		// vBot is looking South East
-	SOUTH_WEST		// vBot is looking South West
+	NORTH_EAST,		// vBot is looking North East	
+	SOUTH_WEST,		// vBot is looking South West
+	SOUTH_EAST		// vBot is looking South East	
 };
 
 // Structure to hold a 2-d location in room(2d array)
