@@ -9,7 +9,7 @@
 using namespace std;
 
 const double EXPLORE = 0.2;
-const double ALPHA = 0.1;
+const double ALPHA = 0.9;
 const double GAMMA = 0.5;
 const int EPOCHS = 10000;
 
@@ -81,13 +81,9 @@ int main()
 		{			
 			MoveCurrentLocation(ec, currLoc, path, it);
 			reward += ec.GetValueOnLocation(currLoc);
-			//cout << ec.ToString(path);
-			//system("pause");
 		}
 
 		dout << "Reward: " << reward << endl;
-		//cout << ec.ToString(path);
-		//system("pause");
 		dout << ec.ToString(path);
 		dout << endl << endl << endl;
 
@@ -111,8 +107,6 @@ int main()
 		{	
 			MoveCurrentLocation(ec, currLoc, path, it);
 			reward += ec.GetValueOnLocation(currLoc);
-			cout << ec.ToString(path);
-			cout << ec.ToString(currLoc);
 			
 		}
 
@@ -234,7 +228,6 @@ void initQStates() {
 			qStates[i][j]->QSouthWest = 0.0;
 			qStates[i][j]->QSouthEast = 0.0;
 		}
-		cout << endl;
 	}
 }
 
