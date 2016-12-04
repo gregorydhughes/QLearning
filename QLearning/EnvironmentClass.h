@@ -40,6 +40,9 @@ public:
 	// Predicates if there is a pony on location
 	bool HasPony(LocRec loc);
 
+	// Predicates if there is a troll on location
+	bool HasTroll(LocRec loc);
+
 	// vacuums a tile
 	void FreePony(LocRec loc);
 

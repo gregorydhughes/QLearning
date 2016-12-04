@@ -68,6 +68,13 @@ bool EnvironmentClass::HasPony(LocRec loc)
 	return false;
 }
 
+bool EnvironmentClass::HasTroll(LocRec loc)
+{
+	if (room[loc.rowY][loc.colX].hasTroll)
+		return true;
+	return false;
+}
+
 void EnvironmentClass::FreePony(LocRec loc)
 {
 	room[loc.rowY][loc.colX].hasPony = false;
