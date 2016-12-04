@@ -5,11 +5,13 @@
 #include <cstdlib>
 #include <ctime>
 #include <math.h>
+#include <sstream>
 
 using namespace std;
 
-const double ALPHA = 0.5;
-const double GAMMA = 0.9;
+const double EXPLORE = 0.2;
+const double ALPHA = 0.1;
+const double GAMMA = 0.5;
 const int EPOCHS = 10000;
 
 const int MAX_LOCATIONS = 400;
@@ -24,9 +26,9 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec);
 
 void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
 
-void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, Direction dir);
+void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRec *nextState, Direction dir);
 
-Direction getDirectionPGreedy(QValueRec * currState);
+LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr);
 
 double calculateQLearnValue(double qVal, double qMax, double reward);
 
@@ -34,7 +36,13 @@ double getMaxQ(QValueRec *currState);
 
 void initQStates();
 
-Direction getDirectionGreedy(QValueRec * currState, LocRec temp);
+LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr);
+
+LocRec getNewLoc(LocRec temp, Direction dir);
+
+double getSumQ(QValueRec *currState);
+
+int stringToInt(string s);
 
 int main()
 {
@@ -45,10 +53,10 @@ int main()
 	LocRec currLoc;
 	initQStates();
 	// for testing
-	srand(123);
+	//srand(123);
 
 	// For Running
-	// srand((time(NULL) * 9791) % 83);
+	srand((time(NULL) * 9791) % 83);
 
 	ofstream dout;
 
@@ -79,10 +87,7 @@ int main()
 		}
 
 		dout << "Reward: " << reward << endl;
-		cout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
-		//cout << ec.ToString(path);
-		//system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();
@@ -90,7 +95,6 @@ int main()
 
 	for (int i = 0; i < 1; i++)
 	{
-		system("pause");
 		EnvironmentClass ec;
 		ALGORITHM = "GREEDY";
 		ReadFile(ec);
@@ -102,30 +106,31 @@ int main()
 		currLoc = EstablishStartingLocation(ec);
 
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
-		{
-			//dout << ec.ToString(currLoc);
-			
+		{	
 			MoveCurrentLocation(ec, currLoc, path, it);
 			reward += ec.GetValueOnLocation(currLoc);
-			cout << ec.ToString(path);
+			
 		}
 
 		dout << "Reward: " << reward << endl;
-		cout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
-		//system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();
 	}
-
-	system("pause");
 	dout.close();
 
 	return 0;
 }
 
+
+int stringToInt(string s) {
+    std::stringstream ss(s);
+    int x;
+    ss >> x;
+    return x;
+}
 
 void ReadFile(EnvironmentClass & ec)
 {
@@ -176,13 +181,13 @@ void ReadFile(EnvironmentClass & ec)
 
 			if (numbersFound % 2 == 0)
 			{
-				temp.rowY = stoi(num);
+				temp.rowY = stringToInt(num);
 
 				if (temp.rowY != -1 && temp.colX != -1)
 					ec.SetObstructionOnLocation(temp);
 			}
 			else
-				temp.colX = stoi(num);
+				temp.colX = stringToInt(num);
 
 			num = "";
 		}
@@ -230,71 +235,31 @@ void initQStates() {
 			qStates[i][j]->QSouthWest = 0.0;
 			qStates[i][j]->QSouthEast = 0.0;
 		}
-		cout << endl;
 	}
 }
 
 void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it)
-{
+{	
 	path.push_back(curr);
 
 	if (ec.HasPony(curr))
 		ec.FreePony(curr);
 
-	Direction dir;
-	RewardsRec currRewards = ec.ReturnNeighboringQValues(curr);
-	QValueRec * currState = qStates[curr.rowY - 1][curr.colX - 1];
+	Direction dir;	
+	QValueRec * currState = qStates[curr.rowY][curr.colX];
 	
-	LocRec temp;
-
-	do {
-		temp = curr;
-		// get a new direction
-		if (ALGORITHM.compare("GREEDY") == 0) {			
-			dir = getDirectionGreedy(currState, temp);
-		} else
-			dir = getDirectionPGreedy(currState);
-
-		switch (dir)
-		{
-		case TRUE_NORTH:
-			temp.rowY += 1;
-			break;
-		case TRUE_SOUTH:
-			temp.rowY -= 1;
-			break;
-		case TRUE_EAST:
-			temp.colX += 1;
-			break;
-		case TRUE_WEST:
-			temp.colX -= 1;
-			break;
-		case NORTH_EAST:
-			temp.colX += 1;
-			temp.rowY += 1;
-			break;
-		case NORTH_WEST:
-			temp.colX -= 1;
-			temp.rowY += 1;
-			break;
-		case SOUTH_EAST:
-			temp.colX += 1;
-			temp.rowY -= 1;
-			break;
-		case SOUTH_WEST:
-			temp.colX -= 1;
-			temp.rowY -= 1;
-			break;
-		}
-		
-	} while (!ec.IsTileValid(temp));	
-	calculateQLearnValues(currRewards, currState, dir);
-
-	curr = temp;
+	if (ALGORITHM.compare("GREEDY") == 0) {
+		LocRec temp;
+		do {
+			temp = getDirectionPGreedy(currState, ec, curr);
+		} while (!ec.IsTileValid(temp));
+		curr = temp;		
+	} else
+		curr = getDirectionPGreedy(currState, ec, curr);
 }
 
-Direction getDirectionGreedy(QValueRec * currState, LocRec temp) {
-	double values[8] = {
+LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr) {
+	double values[MAX_DIRECTIONS] = {
 		currState->QNorth,
 		currState->QSouth,
 		currState->QWest,
@@ -306,36 +271,15 @@ Direction getDirectionGreedy(QValueRec * currState, LocRec temp) {
 	};
 
 	int max = 0;
-	double sum = 0;
-
-	for (int i = 0; i < 8; i++) {
-		sum += values[i];
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (values[max] < values[i])
 			max = i;
-	}
-	
-	switch (max) {
-	case 0: return TRUE_NORTH;
-		break;
-	case 1: return TRUE_SOUTH;
-		break;
-	case 2: return TRUE_WEST;
-		break;
-	case 3: return TRUE_EAST;
-		break;
-	case 4: return NORTH_WEST;
-		break;
-	case 5: return NORTH_EAST;
-		break;
-	case 6: return SOUTH_WEST;
-		break;
-	case 7: return SOUTH_EAST;
-		break;
-	}
+
+	return getNewLoc(curr, static_cast<Direction>(max));
 }
 
-Direction getDirectionPGreedy(QValueRec * currState) {
-	double values[8] = {
+LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr) {
+	double values[MAX_DIRECTIONS] = {
 						currState->QNorth,
 					    currState->QSouth,
 						currState->QWest,
@@ -345,89 +289,138 @@ Direction getDirectionPGreedy(QValueRec * currState) {
 						currState->QSouthWest,
 						currState->QSouthEast
 	};
+
+	RewardsRec currRewards = ec.ReturnNeighboringQValues(curr);
+	LocRec temp;
+	Direction dir;
+	double checkProb = ((double)rand() / (RAND_MAX));
 	
-	double sum = 0.0;
-	for (int i = 0; i < 8; i++)
-		sum += values[i];
+	if (getSumQ(currState) == 0.0 || EXPLORE > checkProb) {
+		dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
+		temp = getNewLoc(curr, dir);
 
-	if (sum <= 1.0)
-		return static_cast<Direction>(rand() % MAX_DIRECTIONS);
-	
-	double prob = 0.0;
-	while (prob == 0.0)
-		prob = fmod((double)rand(), sum);
+		do {
+			dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
+			temp = getNewLoc(curr, dir);
+		} while (!ec.IsTileValid(temp));
 
-	int result;	
+		calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
+		return temp;
 
-	double runningSum = 0.0;	
-	for (int i = 0; i < 8; i++) {
-		if (values[i] == 0.0)
-			if (rand() % 10 == 0) {
-				result = i;
-				break;
+	} else {
+		double prob = 0.0;			
+		int action = rand() % MAX_DIRECTIONS;	
+		
+		for (int i = 0; i < MAX_DIRECTIONS; i++) {			
+			dir = static_cast<Direction>(action);
+
+			temp = getNewLoc(curr, dir);
+			if (ec.IsTileValid(temp)) {
+				prob = values[action] / getSumQ(currState);
+				checkProb = ((double)rand() / (RAND_MAX));
+				if (prob > checkProb && prob > 0.0) {
+					calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
+					return temp;
+				}				
+				if (++action == MAX_DIRECTIONS)
+					action = 0;				
 			}
-		if (prob > runningSum && prob <= (runningSum + values[i])) {
-			result = i;
-			break;
 		}
-		runningSum += values[i];
 	}
 
-	switch (result) {
-	case 0: return TRUE_NORTH;		
+	do {
+		dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
+		temp = getNewLoc(curr, dir);
+	} while (!ec.IsTileValid(temp));
+	calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);	
+	return temp;
+}
+
+LocRec getNewLoc(LocRec temp, Direction dir) {
+	switch (dir) {
+	case TRUE_NORTH:
+		temp.rowY += 1;
 		break;
-	case 1: return TRUE_SOUTH;
+	case TRUE_SOUTH:
+		temp.rowY -= 1;
 		break;
-	case 2: return TRUE_WEST;		
+	case TRUE_WEST:
+		temp.colX -= 1;
 		break;
-	case 3: return TRUE_EAST;
+	case TRUE_EAST:
+		temp.colX += 1;
 		break;
-	case 4: return NORTH_WEST;
+	case NORTH_WEST:
+		temp.colX -= 1;
+		temp.rowY += 1;
 		break;
-	case 5: return NORTH_EAST;
+	case NORTH_EAST:
+		temp.colX += 1;
+		temp.rowY += 1;
 		break;
-	case 6: return SOUTH_WEST;
+	case SOUTH_WEST:
+		temp.colX -= 1;
+		temp.rowY -= 1;
 		break;
-	case 7: return SOUTH_EAST;
+	case SOUTH_EAST:
+		temp.colX += 1;
+		temp.rowY -= 1;
 		break;
+	}
+	return temp;
+}
+
+void calculateQLearnValues(RewardsRec currRewards, QValueRec *maxState, QValueRec *nextState, Direction dir) {
+	double maxQ = getMaxQ(nextState);
+	switch (dir) {
+	case TRUE_NORTH:
+		maxState->QNorth += calculateQLearnValue(maxState->QNorth, maxQ, currRewards.rNorth);
+		break;
+	case TRUE_SOUTH:
+		maxState->QSouth += calculateQLearnValue(maxState->QSouth, maxQ, currRewards.rSouth);
+		break;
+	case TRUE_WEST:
+		maxState->QWest += calculateQLearnValue(maxState->QWest, maxQ, currRewards.rWest);
+		break;
+	case TRUE_EAST:
+		maxState->QEast += calculateQLearnValue(maxState->QEast, maxQ, currRewards.rEast);
+		break;	
+	case NORTH_WEST:
+		maxState->QNorthWest += calculateQLearnValue(maxState->QNorthWest, maxQ, currRewards.rNorthWest);
+		break;
+	case NORTH_EAST:
+		maxState->QNorthEast += calculateQLearnValue(maxState->QNorthEast, maxQ, currRewards.rNorthEast);
+		break;
+	case SOUTH_WEST:
+		maxState->QSouthWest += calculateQLearnValue(maxState->QSouthWest, maxQ, currRewards.rSouthWest);
+		break;
+	case SOUTH_EAST:
+		maxState->QSouthEast += calculateQLearnValue(maxState->QSouthEast, maxQ, currRewards.rSouthEast);
+		break;	
 	}	
 }
 
-void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, Direction dir) {
+double getSumQ(QValueRec *currState) {
+	double values[MAX_DIRECTIONS] = {
+		currState->QNorth,
+		currState->QSouth,
+		currState->QWest,
+		currState->QEast,
+		currState->QNorthWest,
+		currState->QNorthEast,
+		currState->QSouthWest,
+		currState->QSouthEast
+	};
 
-	double maxQ = getMaxQ(currState);
+	double sum = 0.0;
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
+		sum += values[i];
 
-	
-	switch (dir) {
-	case TRUE_NORTH:
-		currState->QNorth = calculateQLearnValue(currState->QNorth, maxQ, currValues.rNorth);
-		break;
-	case TRUE_SOUTH:
-		currState->QSouth = calculateQLearnValue(currState->QSouth, maxQ, currValues.rSouth);
-		break;
-	case TRUE_EAST:
-		currState->QEast = calculateQLearnValue(currState->QEast, maxQ, currValues.rEast);
-		break;
-	case TRUE_WEST:
-		currState->QWest = calculateQLearnValue(currState->QWest, maxQ, currValues.rWest);
-		break;
-	case NORTH_EAST:
-		currState->QSouthEast = calculateQLearnValue(currState->QSouthEast, maxQ, currValues.rSouthEast);
-		break;
-	case NORTH_WEST:
-		currState->QSouthWest = calculateQLearnValue(currState->QSouthWest, maxQ, currValues.rSouthWest);
-		break;
-	case SOUTH_EAST:
-		currState->QNorthEast = calculateQLearnValue(currState->QNorthEast, maxQ, currValues.rNorthEast);
-		break;
-	case SOUTH_WEST:
-		currState->QNorthWest = calculateQLearnValue(currState->QNorthWest, maxQ, currValues.rNorthWest);
-		break;
-	}
+	return sum;
 }
 
 double getMaxQ(QValueRec *currState) {
-	double values[8] = {
+	double values[MAX_DIRECTIONS] = {
 		currState->QNorth,
 		currState->QSouth,
 		currState->QWest,
@@ -439,12 +432,12 @@ double getMaxQ(QValueRec *currState) {
 	};
 
 	double maxQ = 0.0;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (maxQ < values[i])
 			maxQ = values[i];
 	return maxQ;
 }
 
 double calculateQLearnValue(double qVal, double qMax, double reward) {
-	return qVal + ALPHA * (reward + (GAMMA * qMax) - qVal);		
+	return ALPHA * (reward + (GAMMA * qMax) - qVal) + .01;
 }
