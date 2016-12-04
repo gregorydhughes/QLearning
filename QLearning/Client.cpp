@@ -26,7 +26,7 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec);
 
 void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
 
-void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, Direction dir);
+void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRec *nextState, Direction dir);
 
 LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr);
 
@@ -259,7 +259,7 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 }
 
 LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr) {
-	double values[8] = {
+	double values[MAX_DIRECTIONS] = {
 		currState->QNorth,
 		currState->QSouth,
 		currState->QWest,
@@ -271,7 +271,7 @@ LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec c
 	};
 
 	int max = 0;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (values[max] < values[i])
 			max = i;
 
@@ -279,7 +279,7 @@ LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec c
 }
 
 LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr) {
-	double values[8] = {
+	double values[MAX_DIRECTIONS] = {
 						currState->QNorth,
 					    currState->QSouth,
 						currState->QWest,
@@ -304,7 +304,7 @@ LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec 
 			temp = getNewLoc(curr, dir);
 		} while (!ec.IsTileValid(temp));
 
-		calculateQLearnValues(currRewards, currState, dir);
+		calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
 		return temp;
 
 	} else {
@@ -319,7 +319,7 @@ LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec 
 				prob = values[action] / getSumQ(currState);
 				checkProb = ((double)rand() / (RAND_MAX));
 				if (prob > checkProb && prob > 0.0) {
-					calculateQLearnValues(currRewards, currState, dir);
+					calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
 					return temp;
 				}				
 				if (++action == MAX_DIRECTIONS)
@@ -332,7 +332,7 @@ LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec 
 		dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
 		temp = getNewLoc(curr, dir);
 	} while (!ec.IsTileValid(temp));
-	calculateQLearnValues(currRewards, currState, dir);	
+	calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);	
 	return temp;
 }
 
@@ -370,8 +370,8 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 	return temp;
 }
 
-void calculateQLearnValues(RewardsRec currRewards, QValueRec *maxState, Direction dir) {
-	double maxQ = getMaxQ(maxState);
+void calculateQLearnValues(RewardsRec currRewards, QValueRec *maxState, QValueRec *nextState, Direction dir) {
+	double maxQ = getMaxQ(nextState);
 	switch (dir) {
 	case TRUE_NORTH:
 		maxState->QNorth += calculateQLearnValue(maxState->QNorth, maxQ, currRewards.rNorth);
@@ -401,7 +401,7 @@ void calculateQLearnValues(RewardsRec currRewards, QValueRec *maxState, Directio
 }
 
 double getSumQ(QValueRec *currState) {
-	double values[8] = {
+	double values[MAX_DIRECTIONS] = {
 		currState->QNorth,
 		currState->QSouth,
 		currState->QWest,
@@ -413,14 +413,14 @@ double getSumQ(QValueRec *currState) {
 	};
 
 	double sum = 0.0;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		sum += values[i];
 
 	return sum;
 }
 
 double getMaxQ(QValueRec *currState) {
-	double values[8] = {
+	double values[MAX_DIRECTIONS] = {
 		currState->QNorth,
 		currState->QSouth,
 		currState->QWest,
@@ -432,7 +432,7 @@ double getMaxQ(QValueRec *currState) {
 	};
 
 	double maxQ = 0.0;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (maxQ < values[i])
 			maxQ = values[i];
 	return maxQ;
