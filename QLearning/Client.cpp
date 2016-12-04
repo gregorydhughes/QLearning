@@ -24,7 +24,7 @@ void ReadFile(EnvironmentClass & ec);
 
 LocRec EstablishStartingLocation(EnvironmentClass & ec);
 
-void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
+bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
 
 void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRec *nextState, Direction dir);
 
@@ -46,16 +46,10 @@ int stringToInt(string s);
 
 int main()
 {
-	EnvironmentClass ec;
-
-	ReadFile(ec);
-
 	LocRec currLoc;
-	initQStates();
-	// for testing
-	//srand(123);
 
-	// For Running
+	initQStates();
+
 	srand((time(NULL) * 9791) % 83);
 
 	ofstream dout;
@@ -64,8 +58,6 @@ int main()
 
 	vector<LocRec> path = vector<LocRec>();
 	vector<LocRec>::iterator it = path.begin();
-
-	//firstMove(ec, path, it);
 
 	for (int i = 0; i < EPOCHS; i++)
 	{
@@ -81,9 +73,9 @@ int main()
 		currLoc = EstablishStartingLocation(ec);
 
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
-		{			
-			MoveCurrentLocation(ec, currLoc, path, it);
-			reward += ec.GetValueOnLocation(currLoc);
+		{	reward += ec.GetValueOnLocation(currLoc);	
+			if(!MoveCurrentLocation(ec, currLoc, path, it))
+				break;			
 		}
 
 		dout << "Reward: " << reward << endl;
@@ -106,10 +98,9 @@ int main()
 		currLoc = EstablishStartingLocation(ec);
 
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
-		{	
-			MoveCurrentLocation(ec, currLoc, path, it);
-			reward += ec.GetValueOnLocation(currLoc);
-			
+		{	reward += ec.GetValueOnLocation(currLoc);
+			if(!MoveCurrentLocation(ec, currLoc, path, it))
+				break;	
 		}
 
 		dout << "Reward: " << reward << endl;
@@ -238,12 +229,14 @@ void initQStates() {
 	}
 }
 
-void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it)
+bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it)
 {	
 	path.push_back(curr);
 
 	if (ec.HasPony(curr))
 		ec.FreePony(curr);
+	else if (ec.HasTroll(curr))
+		return false;
 
 	Direction dir;	
 	QValueRec * currState = qStates[curr.rowY][curr.colX];
@@ -256,6 +249,7 @@ void MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		curr = temp;		
 	} else
 		curr = getDirectionPGreedy(currState, ec, curr);
+	return true;
 }
 
 LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr) {
