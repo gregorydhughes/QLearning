@@ -251,11 +251,11 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	if (!algorithm) {
 		LocRec temp;
 		do {
-			temp = getDirectionGreedy(currState, ec, curr);
+			temp = getDirectionPGreedy(currState, ec, curr);
 		} while (!ec.IsTileValid(temp));
 		curr = temp;		
 	} else
-		curr = getDirectionPGreedy(currState, ec, curr);
+		curr = getDirectionGreedy(currState, ec, curr);
 	return true;
 }
 
