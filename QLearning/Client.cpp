@@ -403,14 +403,14 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 			qStates[currRow][currCol].weigthSouthEast -= .001;
 		break;
 	}
-	cout << qStates[currRow][currCol].QNorth << endl;
+	/*cout << qStates[currRow][currCol].QNorth << endl;
 	cout << qStates[currRow][currCol].QSouth << endl;
 	cout << qStates[currRow][currCol].QWest << endl;
 	cout << qStates[currRow][currCol].QEast << endl;
 	cout << qStates[currRow][currCol].QNorthWest << endl;
 	cout << qStates[currRow][currCol].QNorthEast << endl;
 	cout << qStates[currRow][currCol].QSouthWest << endl;
-	cout << qStates[currRow][currCol].QSouthEast << endl;
+	cout << qStates[currRow][currCol].QSouthEast << endl;*/
 }
 
 double getSumQ(QValueRec currState) {
