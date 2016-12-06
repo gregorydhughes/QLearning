@@ -32,6 +32,8 @@ double calculateQLearnValue(double lWeight, double qVal, double qMax, double rew
 
 double getMaxQ(QValueRec currState);
 
+//void initQStates();
+
 LocRec getDirectionGreedy(QValueRec currState, EnvironmentClass & ec, LocRec curr);
 
 LocRec getNewLoc(LocRec temp, Direction dir);
@@ -43,6 +45,8 @@ int stringToInt(string s);
 int main()
 {
 	LocRec currLoc;
+
+	//initQStates();
 
 	srand((time(NULL) * 9791) % 83);
 
@@ -208,6 +212,32 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 
 QValueRec qStates[MAX_ROOM_SIZE + 1][MAX_ROOM_SIZE + 1];
 
+/*
+void initQStates() {
+	for (int i = 0; i < MAX_ROOM_SIZE; i++) {
+		for (int j = 0; j < MAX_ROOM_SIZE; j++) {
+			qStates[i][j] = new QValueRec;
+			qStates[i][j]->QNorth = 0.0;
+			qStates[i][j]->QSouth = 0.0;
+			qStates[i][j]->QWest = 0.0;
+			qStates[i][j]->QEast = 0.0;
+			qStates[i][j]->QNorthWest = 0.0;
+			qStates[i][j]->QNorthEast = 0.0;
+			qStates[i][j]->QSouthWest = 0.0;
+			qStates[i][j]->QSouthEast = 0.0;
+			// Initialize weigths
+			qStates[i][j]->weigthNorth = 0.0;
+			qStates[i][j]->weigthSouth = 0.0;
+			qStates[i][j]->weigthWest = 0.0;
+			qStates[i][j]->weigthEast = 0.0;
+			qStates[i][j]->weigthNorthWest = 0.0;
+			qStates[i][j]->weigthNorthEast = 0.0;
+			qStates[i][j]->weigthSouthWest = 0.0;
+			qStates[i][j]->weigthSouthEast = 0.0;
+		}
+	}
+}
+*/
 bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm)
 {	
 	path.push_back(curr);
@@ -359,7 +389,7 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 	double maxQ = getMaxQ(qStates[nextRow][nextCol]);
 	switch (dir) {
 	case TRUE_NORTH:
-		qStates[currRow][currCol].QNorth = calculateQLearnValue(qStates[currRow][currCol].weigthNorth, qStates[currRow][currCol].QNorth, maxQ, currRewards.rNorth);
+		qStates[currRow][currCol].QNorth += calculateQLearnValue(qStates[currRow][currCol].weigthNorth, qStates[currRow][currCol].QNorth, maxQ, currRewards.rNorth);
 		if (qStates[currRow][currCol].weigthNorth > 0.0)
 			qStates[currRow][currCol].weigthNorth -= .001;
 		break;
