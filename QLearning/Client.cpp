@@ -291,7 +291,7 @@ LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 		qStates[curr.rowY][curr.colX].QSouthWest,
 		qStates[curr.rowY][curr.colX].QSouthEast
 	};
-	
+	cout << "here" << endl;
 	if (getSumQ(qStates[curr.rowY][curr.colX]) <= 0.0)
 		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 
