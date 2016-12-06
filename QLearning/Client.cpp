@@ -255,7 +255,7 @@ LocRec getDirectionGreedy(QValueRec currState, EnvironmentClass & ec, LocRec cur
 	int max = 0;
 	for (int i = 0; i < MAX_DIRECTIONS; i++) {
 		cout << "Max: " << max << endl;
-		cout << "Values[max]: " << values[max] << endl;
+		cout << "Values[i]: " << values[i] << endl;
 		if (values[max] < values[i])
 			max = i;
 	}
