@@ -34,6 +34,15 @@ struct QValueRec
 	double QSouthWest;			
 	double QWest;				
 	double QNorthWest;
+	// The weight determiner
+	double weigthNorth;
+	double weigthNorthEast;
+	double weigthEast;
+	double weigthSouthEast;
+	double weigthSouth;
+	double weigthSouthWest;
+	double weigthWest;
+	double weigthNorthWest;
 };
 
 #endif // !TILEREC_H

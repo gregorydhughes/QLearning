@@ -30,7 +30,7 @@ void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRe
 
 LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr);
 
-double calculateQLearnValue(double qVal, double qMax, double reward);
+double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward);
 
 double getMaxQ(QValueRec *currState);
 
@@ -106,6 +106,7 @@ int main()
 		dout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
+		system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();
@@ -225,6 +226,15 @@ void initQStates() {
 			qStates[i][j]->QNorthEast = 0.0;
 			qStates[i][j]->QSouthWest = 0.0;
 			qStates[i][j]->QSouthEast = 0.0;
+			// Initialize weigths
+			qStates[i][j]->weigthNorth = 0.0;
+			qStates[i][j]->weigthSouth = 0.0;
+			qStates[i][j]->weigthWest = 0.0;
+			qStates[i][j]->weigthEast = 0.0;
+			qStates[i][j]->weigthNorthWest = 0.0;
+			qStates[i][j]->weigthNorthEast = 0.0;
+			qStates[i][j]->weigthSouthWest = 0.0;
+			qStates[i][j]->weigthSouthEast = 0.0;
 		}
 	}
 }
@@ -364,32 +374,48 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 	return temp;
 }
 
-void calculateQLearnValues(RewardsRec currRewards, QValueRec *maxState, QValueRec *nextState, Direction dir) {
+void calculateQLearnValues(RewardsRec currRewards, QValueRec *currState, QValueRec *nextState, Direction dir) {
 	double maxQ = getMaxQ(nextState);
 	switch (dir) {
 	case TRUE_NORTH:
-		maxState->QNorth += calculateQLearnValue(maxState->QNorth, maxQ, currRewards.rNorth);
+		currState->QNorth += calculateQLearnValue(currState->weigthNorth, currState->QNorth, maxQ, currRewards.rNorth);
+		if (currState->weigthNorth > 0.0)
+			currState->weigthNorth -= .01;
 		break;
 	case TRUE_SOUTH:
-		maxState->QSouth += calculateQLearnValue(maxState->QSouth, maxQ, currRewards.rSouth);
+		currState->QSouth += calculateQLearnValue(currState->weigthSouth, currState->QSouth, maxQ, currRewards.rSouth);
+		if (currState->weigthSouth > 0.0)
+			currState->weigthSouth -= .01;
 		break;
 	case TRUE_WEST:
-		maxState->QWest += calculateQLearnValue(maxState->QWest, maxQ, currRewards.rWest);
+		currState->QWest += calculateQLearnValue(currState->weigthWest, currState->QWest, maxQ, currRewards.rWest);
+		if (currState->weigthWest > 0.0)
+			currState->weigthWest -= .01;
 		break;
 	case TRUE_EAST:
-		maxState->QEast += calculateQLearnValue(maxState->QEast, maxQ, currRewards.rEast);
+		currState->QEast += calculateQLearnValue(currState->weigthEast, currState->QEast, maxQ, currRewards.rEast);
+		if (currState->weigthEast > 0.0)
+			currState->weigthEast -= .01;
 		break;	
 	case NORTH_WEST:
-		maxState->QNorthWest += calculateQLearnValue(maxState->QNorthWest, maxQ, currRewards.rNorthWest);
+		currState->QNorthWest += calculateQLearnValue(currState->weigthNorthWest, currState->QNorthWest, maxQ, currRewards.rNorthWest);
+		if (currState->weigthNorthWest > 0.0)
+			currState->weigthNorthWest -= .01;
 		break;
 	case NORTH_EAST:
-		maxState->QNorthEast += calculateQLearnValue(maxState->QNorthEast, maxQ, currRewards.rNorthEast);
+		currState->QNorthEast += calculateQLearnValue(currState->weigthNorthEast, currState->QNorthEast, maxQ, currRewards.rNorthEast);
+		if (currState->weigthNorthEast > 0.0)
+			currState->weigthNorthEast -= .01;
 		break;
 	case SOUTH_WEST:
-		maxState->QSouthWest += calculateQLearnValue(maxState->QSouthWest, maxQ, currRewards.rSouthWest);
+		currState->QSouthWest += calculateQLearnValue(currState->weigthSouthWest, currState->QSouthWest, maxQ, currRewards.rSouthWest);
+		if (currState->weigthSouthWest > 0.0)
+			currState->weigthSouthWest -= .01;
 		break;
 	case SOUTH_EAST:
-		maxState->QSouthEast += calculateQLearnValue(maxState->QSouthEast, maxQ, currRewards.rSouthEast);
+		currState->QSouthEast += calculateQLearnValue(currState->weigthSouthEast, currState->QSouthEast, maxQ, currRewards.rSouthEast);
+		if (currState->weigthSouthEast > 0.0)
+			currState->weigthSouthEast -= .01;
 		break;	
 	}	
 }
@@ -432,6 +458,6 @@ double getMaxQ(QValueRec *currState) {
 	return maxQ;
 }
 
-double calculateQLearnValue(double qVal, double qMax, double reward) {
-	return ALPHA * (reward + (GAMMA * qMax) - qVal) + .01;
+double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
+	return (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal) + .01;
 }
