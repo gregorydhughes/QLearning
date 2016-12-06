@@ -198,8 +198,8 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 	LocRec ans;
 
 	do {
-		ans.colX = 1;
-		ans.rowY = 1;
+		ans.colX = (rand() % s) + 1;
+		ans.rowY = (rand() % s) + 1;
 	} while (ec.HasTroll(ans));
 
 	return ans;
@@ -266,24 +266,24 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 
 LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 	double values[MAX_DIRECTIONS] = {
-		qStates[curr.rowY - 1][curr.colX - 1].QNorth,
-		qStates[curr.rowY - 1][curr.colX - 1].QSouth,
-		qStates[curr.rowY - 1][curr.colX - 1].QWest,
-		qStates[curr.rowY - 1][curr.colX - 1].QEast,
-		qStates[curr.rowY - 1][curr.colX - 1].QNorthWest,
-		qStates[curr.rowY - 1][curr.colX - 1].QNorthEast,
-		qStates[curr.rowY - 1][curr.colX - 1].QSouthWest,
-		qStates[curr.rowY - 1][curr.colX - 1].QSouthEast
+		qStates[curr.rowY][curr.colX].QNorth,
+		qStates[curr.rowY][curr.colX].QSouth,
+		qStates[curr.rowY][curr.colX].QWest,
+		qStates[curr.rowY][curr.colX].QEast,
+		qStates[curr.rowY][curr.colX].QNorthWest,
+		qStates[curr.rowY][curr.colX].QNorthEast,
+		qStates[curr.rowY][curr.colX].QSouthWest,
+		qStates[curr.rowY][curr.colX].QSouthEast
 	};
 	/*
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QNorth << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QSouth << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QWest << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QEast << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QNorthWest << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QNorthEast << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QSouthWest << endl;
-	cout << qStates[curr.rowY - 1][curr.colX - 1].QSouthEast << endl;
+	cout << qStates[curr.rowY][curr.colX].QNorth << endl;
+	cout << qStates[curr.rowY][curr.colX].QSouth << endl;
+	cout << qStates[curr.rowY][curr.colX].QWest << endl;
+	cout << qStates[curr.rowY][curr.colX].QEast << endl;
+	cout << qStates[curr.rowY][curr.colX].QNorthWest << endl;
+	cout << qStates[curr.rowY][curr.colX].QNorthEast << endl;
+	cout << qStates[curr.rowY][curr.colX].QSouthWest << endl;
+	cout << qStates[curr.rowY][curr.colX].QSouthEast << endl;
 	*/
 	int max = 0;
 	for (int i = 0; i < MAX_DIRECTIONS; i++) {		
@@ -297,14 +297,14 @@ LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 
 LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 	double values[MAX_DIRECTIONS] = {
-						qStates[curr.rowY - 1][curr.colX - 1].QNorth,
-					    qStates[curr.rowY - 1][curr.colX - 1].QSouth,
-						qStates[curr.rowY - 1][curr.colX - 1].QWest,
-						qStates[curr.rowY - 1][curr.colX - 1].QEast,
-						qStates[curr.rowY - 1][curr.colX - 1].QNorthWest,
-						qStates[curr.rowY - 1][curr.colX - 1].QNorthEast,
-						qStates[curr.rowY - 1][curr.colX - 1].QSouthWest,
-						qStates[curr.rowY - 1][curr.colX - 1].QSouthEast
+						qStates[curr.rowY][curr.colX].QNorth,
+					    qStates[curr.rowY][curr.colX].QSouth,
+						qStates[curr.rowY][curr.colX].QWest,
+						qStates[curr.rowY][curr.colX].QEast,
+						qStates[curr.rowY][curr.colX].QNorthWest,
+						qStates[curr.rowY][curr.colX].QNorthEast,
+						qStates[curr.rowY][curr.colX].QSouthWest,
+						qStates[curr.rowY][curr.colX].QSouthEast
 	};
 
 	RewardsRec currRewards = ec.ReturnNeighboringQValues(curr);
@@ -312,7 +312,7 @@ LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 	Direction dir;
 	double checkProb = ((double)rand() / (RAND_MAX));
 	
-	if (getSumQ(qStates[curr.rowY - 1][curr.colX - 1]) == 0.0 || EXPLORE > checkProb) {
+	if (getSumQ(qStates[curr.rowY][curr.colX]) == 0.0 || EXPLORE > checkProb) {
 		dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
 		temp = getNewLoc(curr, dir);
 
@@ -333,9 +333,9 @@ LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 
 			temp = getNewLoc(curr, dir);
 			if (ec.IsTileValid(temp)) {
-				prob = values[action] / getSumQ(qStates[curr.rowY - 1][curr.colX - 1]);
+				prob = values[action] / getSumQ(qStates[curr.rowY][curr.colX]);
 				checkProb = ((double)rand() / (RAND_MAX));
-				if (prob > checkProb && prob > 0.0) {
+				if (prob > checkProb) {
 					updateQLearnValues(currRewards, curr.rowY, curr.colX, temp.rowY, temp.colX, dir);
 					return temp;
 				}				
@@ -388,47 +388,47 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 }
 
 void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int nextRow, int nextCol, Direction dir) {
-	double maxQ = getMaxQ(qStates[nextRow - 1][nextCol - 1]);
+	double maxQ = getMaxQ(qStates[nextRow][nextCol]);
 	switch (dir) {
 	case TRUE_NORTH:
-		qStates[currRow - 1][currCol - 1 - 1].QNorth += calculateQLearnValue(qStates[currRow - 1][currCol - 1 - 1].weigthNorth, qStates[currRow - 1][currCol - 1 - 1].QNorth, maxQ, currRewards.rNorth);
-		if (qStates[currRow - 1][currCol - 1 - 1].weigthNorth > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthNorth -= .001;
+		qStates[currRow][currCol].QNorth += calculateQLearnValue(qStates[currRow][currCol].weigthNorth, qStates[currRow][currCol].QNorth, maxQ, currRewards.rNorth);
+		if (qStates[currRow][currCol].weigthNorth > 0.0)
+			qStates[currRow][currCol].weigthNorth -= .001;
 		break;
 	case TRUE_SOUTH:
-		qStates[currRow - 1][currCol - 1].QSouth += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthSouth, qStates[currRow - 1][currCol - 1].QSouth, maxQ, currRewards.rSouth);
-		if (qStates[currRow - 1][currCol - 1].weigthSouth > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthSouth -= .001;
+		qStates[currRow][currCol].QSouth += calculateQLearnValue(qStates[currRow][currCol].weigthSouth, qStates[currRow][currCol].QSouth, maxQ, currRewards.rSouth);
+		if (qStates[currRow][currCol].weigthSouth > 0.0)
+			qStates[currRow][currCol].weigthSouth -= .001;
 		break;
 	case TRUE_WEST:
-		qStates[currRow - 1][currCol - 1].QWest += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthWest, qStates[currRow - 1][currCol - 1].QWest, maxQ, currRewards.rWest);
-		if (qStates[currRow - 1][currCol - 1].weigthWest > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthWest -= .001;
+		qStates[currRow][currCol].QWest += calculateQLearnValue(qStates[currRow][currCol].weigthWest, qStates[currRow][currCol].QWest, maxQ, currRewards.rWest);
+		if (qStates[currRow][currCol].weigthWest > 0.0)
+			qStates[currRow][currCol].weigthWest -= .001;
 		break;
 	case TRUE_EAST:
-		qStates[currRow - 1][currCol - 1].QEast += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthEast, qStates[currRow - 1][currCol - 1].QEast, maxQ, currRewards.rEast);
-		if (qStates[currRow - 1][currCol - 1].weigthEast > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthEast -= .001;
+		qStates[currRow][currCol].QEast += calculateQLearnValue(qStates[currRow][currCol].weigthEast, qStates[currRow][currCol].QEast, maxQ, currRewards.rEast);
+		if (qStates[currRow][currCol].weigthEast > 0.0)
+			qStates[currRow][currCol].weigthEast -= .001;
 		break;
 	case NORTH_WEST:
-		qStates[currRow - 1][currCol - 1].QNorthWest += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthNorthWest, qStates[currRow - 1][currCol - 1].QNorthWest, maxQ, currRewards.rNorthWest);
-		if (qStates[currRow - 1][currCol - 1].weigthNorthWest > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthNorthWest -= .001;
+		qStates[currRow][currCol].QNorthWest += calculateQLearnValue(qStates[currRow][currCol].weigthNorthWest, qStates[currRow][currCol].QNorthWest, maxQ, currRewards.rNorthWest);
+		if (qStates[currRow][currCol].weigthNorthWest > 0.0)
+			qStates[currRow][currCol].weigthNorthWest -= .001;
 		break;
 	case NORTH_EAST:
-		qStates[currRow - 1][currCol - 1].QNorthEast += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthNorthEast, qStates[currRow - 1][currCol - 1].QNorthEast, maxQ, currRewards.rNorthEast);
-		if (qStates[currRow - 1][currCol - 1].weigthNorthEast > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthNorthEast -= .001;
+		qStates[currRow][currCol].QNorthEast += calculateQLearnValue(qStates[currRow][currCol].weigthNorthEast, qStates[currRow][currCol].QNorthEast, maxQ, currRewards.rNorthEast);
+		if (qStates[currRow][currCol].weigthNorthEast > 0.0)
+			qStates[currRow][currCol].weigthNorthEast -= .001;
 		break;
 	case SOUTH_WEST:
-		qStates[currRow - 1][currCol - 1].QSouthWest += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthSouthWest, qStates[currRow - 1][currCol - 1].QSouthWest, maxQ, currRewards.rSouthWest);
-		if (qStates[currRow - 1][currCol - 1].weigthSouthWest > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthSouthWest -= .001;
+		qStates[currRow][currCol].QSouthWest += calculateQLearnValue(qStates[currRow][currCol].weigthSouthWest, qStates[currRow][currCol].QSouthWest, maxQ, currRewards.rSouthWest);
+		if (qStates[currRow][currCol].weigthSouthWest > 0.0)
+			qStates[currRow][currCol].weigthSouthWest -= .001;
 		break;
 	case SOUTH_EAST:
-		qStates[currRow - 1][currCol - 1].QSouthEast += calculateQLearnValue(qStates[currRow - 1][currCol - 1].weigthSouthEast, qStates[currRow - 1][currCol - 1].QSouthEast, maxQ, currRewards.rSouthEast);
-		if (qStates[currRow - 1][currCol - 1].weigthSouthEast > 0.0)
-			qStates[currRow - 1][currCol - 1].weigthSouthEast -= .001;
+		qStates[currRow][currCol].QSouthEast += calculateQLearnValue(qStates[currRow][currCol].weigthSouthEast, qStates[currRow][currCol].QSouthEast, maxQ, currRewards.rSouthEast);
+		if (qStates[currRow][currCol].weigthSouthEast > 0.0)
+			qStates[currRow][currCol].weigthSouthEast -= .001;
 		break;
 	}
 }
