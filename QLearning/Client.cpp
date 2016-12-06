@@ -472,11 +472,6 @@ double getMaxQ(QValueRec currState) {
 }
 
 double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
-	cout << "weight: " << lWeight << endl;
-	cout << "qval: " << qVal << endl;
-	cout << "qMax: " << qMax << endl;
-	cout << "reward:" << reward << endl;
 	double updatedQ = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);
-	cout << "Q" << updatedQ << endl;
 	return updatedQ;
 }
