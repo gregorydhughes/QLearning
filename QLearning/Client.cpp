@@ -97,7 +97,7 @@ int main()
 		int count = 0;
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
 		{	
-			if (count >= 100) {
+			if (count >= 50) {
 				randomMove(ec, currLoc, path);
 				count = 0;
 			}
@@ -281,8 +281,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	return true;
 }
 
-void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path)
-{	
+void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path) {	
 	path.push_back(curr);
 	LocRec temp;
 	do {
