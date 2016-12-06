@@ -40,7 +40,7 @@ double getSumQ(QValueRec currState);
 
 int stringToInt(string s);
 
-
+void initQStates();
 
 int main()
 {
