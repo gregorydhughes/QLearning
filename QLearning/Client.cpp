@@ -40,10 +40,12 @@ double getSumQ(QValueRec currState);
 
 int stringToInt(string s);
 
+
+
 int main()
 {
 	LocRec currLoc;
-
+	initQStates();
 	srand((time(NULL) * 9791) % 83);
 
 	ofstream dout;
@@ -205,6 +207,30 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 
 
 QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
+
+void initQStates() {
+	for (int i = 0; i < MAX_ROOM_SIZE; i++) {
+		for (int j = 0; j < MAX_ROOM_SIZE; j++) {
+			qStates[i][j].QNorth = 0.0;
+			qStates[i][j].QSouth = 0.0;
+			qStates[i][j].QWest = 0.0;
+			qStates[i][j].QEast = 0.0;
+			qStates[i][j].QNorthWest = 0.0;
+			qStates[i][j].QNorthEast = 0.0;
+			qStates[i][j].QSouthWest = 0.0;
+			qStates[i][j].QSouthEast = 0.0;
+			// Initialize weigths
+			qStates[i][j].weigthNorth = 1.0;
+			qStates[i][j].weigthSouth = 1.0;
+			qStates[i][j].weigthWest = 1.0;
+			qStates[i][j].weigthEast = 1.0;
+			qStates[i][j].weigthNorthWest = 1.0;
+			qStates[i][j].weigthNorthEast = 1.0;
+			qStates[i][j].weigthSouthWest = 1.0;
+			qStates[i][j].weigthSouthEast = 1.0;
+		}
+	}
+}
 
 bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm)
 {	
