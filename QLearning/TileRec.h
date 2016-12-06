@@ -9,10 +9,10 @@
 #ifndef PERCEPTREC_H
 #define PERCEPTREC_H
 
-const int REWARD_FOR_PONY = 10;
-const int REWARD_FOR_ESCAPE = 15;
-const int REWARD_FOR_MOVE = 2;
-const int REWARD_FOR_TROLL = -15;
+const double REWARD_FOR_PONY = 10;
+const double REWARD_FOR_ESCAPE = 15;
+const double REWARD_FOR_MOVE = 2;
+const double REWARD_FOR_TROLL = -15;
 
 // Record to hold the percepts on a location
 struct TileRec
