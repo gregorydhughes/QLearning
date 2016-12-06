@@ -12,7 +12,7 @@ using namespace std;
 const double EXPLORE = 0.2;
 const double ALPHA = 0.9;
 const double GAMMA = 0.5;
-const int EPOCHS = 10000;
+const int EPOCHS = 100000;
 
 const int MAX_LOCATIONS = 400;
 
@@ -427,14 +427,14 @@ void calculateQLearnValues(RewardsRec currRewards, QValueRec *currState, QValueR
 			currState->weigthSouthEast -= .001;
 		break;
 	}
-	cout << currState->QNorth << endl;
+	/*cout << currState->QNorth << endl;
 	cout << currState->QSouth << endl;
 	cout << currState->QWest << endl;
 	cout << currState->QEast << endl;
 	cout << currState->QNorthWest << endl;
 	cout << currState->QNorthEast << endl;
 	cout << currState->QSouthWest << endl;
-	cout << currState->QSouthEast << endl;
+	cout << currState->QSouthEast << endl;*/
 }
 
 double getSumQ(QValueRec *currState) {
