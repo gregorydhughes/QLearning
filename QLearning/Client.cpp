@@ -365,7 +365,7 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 	double maxQ = getMaxQ(qStates[nextRow - 1][nextCol - 1]);
 	switch (dir) {
 	case TRUE_NORTH:
-		qStates[currRow - 1][currCol - 1 - 1].QNorth = calculateQLearnValue(qStates[currRow - 1][currCol - 1 - 1].weigthNorth, qStates[currRow - 1][currCol - 1 - 1].QNorth, maxQ, currRewards.rNorth);
+		qStates[currRow - 1][currCol - 1 - 1].QNorth += calculateQLearnValue(qStates[currRow - 1][currCol - 1 - 1].weigthNorth, qStates[currRow - 1][currCol - 1 - 1].QNorth, maxQ, currRewards.rNorth);
 		if (qStates[currRow - 1][currCol - 1 - 1].weigthNorth > 0.0)
 			qStates[currRow - 1][currCol - 1].weigthNorth -= .001;
 		break;
