@@ -277,23 +277,10 @@ LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 		qStates[curr.rowY][curr.colX].QSouthWest,
 		qStates[curr.rowY][curr.colX].QSouthEast
 	};
-	/*
-	cout << qStates[curr.rowY][curr.colX].QNorth << endl;
-	cout << qStates[curr.rowY][curr.colX].QSouth << endl;
-	cout << qStates[curr.rowY][curr.colX].QWest << endl;
-	cout << qStates[curr.rowY][curr.colX].QEast << endl;
-	cout << qStates[curr.rowY][curr.colX].QNorthWest << endl;
-	cout << qStates[curr.rowY][curr.colX].QNorthEast << endl;
-	cout << qStates[curr.rowY][curr.colX].QSouthWest << endl;
-	cout << qStates[curr.rowY][curr.colX].QSouthEast << endl;
-	*/
 	int max = 0;
-	for (int i = 0; i < MAX_DIRECTIONS; i++) {		
+	for (int i = 0; i < MAX_DIRECTIONS; i++)	
 		if (values[max] < values[i])
 			max = i;
-	}
-	cout << "Max: " << max << endl;
-	cout << "Values[max]: " << values[max] << endl;
 	return getNewLoc(curr, static_cast<Direction>(max));
 }
 
