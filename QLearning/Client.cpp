@@ -41,6 +41,8 @@ int stringToInt(string s);
 
 void initQStates();
 
+bool isLooping(LocRec check);
+
 int main()
 {
 	LocRec currLoc;
