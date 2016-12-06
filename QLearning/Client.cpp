@@ -9,11 +9,11 @@
 
 using namespace std;
 
-double EXPLORE = 1000.0;
+
 const double ALPHA = 0.9;
 const double GAMMA = 0.5;
 const int EPOCHS = 10000;
-
+double EXPLORE = EPOCHS / 10;
 const int MAX_LOCATIONS = 400;
 
 const string INPUT_FILE = "input.dat";
@@ -101,7 +101,6 @@ int main()
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
 		dout << endl << endl << endl;
-		system("pause");
 		path.clear();
 	}
 	dout.close();
