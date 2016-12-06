@@ -198,8 +198,8 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 	LocRec ans;
 
 	do {
-		ans.colX = (rand() % s) + 1;
-		ans.rowY = (rand() % s) + 1;
+		ans.colX = 1;
+		ans.rowY = 1;
 	} while (ec.HasTroll(ans));
 
 	return ans;
