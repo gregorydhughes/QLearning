@@ -378,9 +378,6 @@ void calculateQLearnValues(RewardsRec currRewards, QValueRec *currState, QValueR
 	double weight;
 	switch (dir) {
 	case TRUE_NORTH:
-		weight = currState->weigthNorth;
-		if (currRewards.rNorth < 0)
-			weight = 1.0;
 		currState->QNorth += calculateQLearnValue(weight, currState->QNorth, maxQ, currRewards.rNorth);
 		if (currState->weigthNorth > 0.0)
 			currState->weigthNorth -= .001;
@@ -483,5 +480,5 @@ double getMaxQ(QValueRec *currState) {
 }
 
 double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
-	return (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal) + .01;
+	return (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);
 }
