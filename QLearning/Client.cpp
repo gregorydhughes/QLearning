@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const double EXPLORE = 0.3;
+double EXPLORE = 1.0;
 const double ALPHA = 0.9;
 const double GAMMA = 0.5;
 const int EPOCHS = 10000;
@@ -76,7 +76,7 @@ int main()
 			if(!MoveCurrentLocation(ec, currLoc, path, it, false))
 				break;			
 		}
-
+		EXPLORE = EXPLORE * 0.99;
 		dout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
 		dout << endl << endl << endl;
