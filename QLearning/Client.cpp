@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const double EXPLORE = 0.2;
+const double EXPLORE = 0.3;
 const double ALPHA = 0.9;
 const double GAMMA = 0.5;
 const int EPOCHS = 100000;
@@ -24,7 +24,7 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec);
 
 bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm);
 
-void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRec *nextState, Direction dir);
+void updateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRec *nextState, Direction dir);
 
 LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec curr);
 
@@ -70,8 +70,9 @@ int main()
 
 		currLoc = EstablishStartingLocation(ec);
 
-		while (ec.GetLocationInformation(currLoc).isEscape == false)
-		{	reward += ec.GetValueOnLocation(currLoc);	
+		while (!ec.GetLocationInformation(currLoc).isEscape)
+		{	
+			reward += ec.GetValueOnLocation(currLoc);	
 			if(!MoveCurrentLocation(ec, currLoc, path, it, false))
 				break;			
 		}
@@ -317,7 +318,7 @@ LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec 
 			temp = getNewLoc(curr, dir);
 		} while (!ec.IsTileValid(temp));
 
-		calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
+		updateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
 		return temp;
 
 	} else {
@@ -332,7 +333,7 @@ LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec 
 				prob = values[action] / getSumQ(currState);
 				checkProb = ((double)rand() / (RAND_MAX));
 				if (prob > checkProb && prob > 0.0) {
-					calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
+					updateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);
 					return temp;
 				}				
 				if (++action == MAX_DIRECTIONS)
@@ -345,7 +346,7 @@ LocRec getDirectionPGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec 
 		dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
 		temp = getNewLoc(curr, dir);
 	} while (!ec.IsTileValid(temp));
-	calculateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);	
+	updateQLearnValues(currRewards, currState, qStates[temp.rowY][temp.colX], dir);	
 	return temp;
 }
 
@@ -383,7 +384,7 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 	return temp;
 }
 
-void calculateQLearnValues(RewardsRec currRewards, QValueRec *currState, QValueRec *nextState, Direction dir) {
+void updateQLearnValues(RewardsRec currRewards, QValueRec *currState, QValueRec *nextState, Direction dir) {
 	double maxQ = getMaxQ(nextState);
 	switch (dir) {
 	case TRUE_NORTH:
