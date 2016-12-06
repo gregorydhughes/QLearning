@@ -15,7 +15,7 @@ const double GAMMA = 0.5;
 const int EPOCHS = 10000;
 double EXPLORE = 0.2;
 const int MAX_LOCATIONS = 400;
-
+int COUNT = 0;
 const string INPUT_FILE = "input.dat";
 
 void ReadFile(EnvironmentClass & ec);
@@ -232,7 +232,7 @@ void initQStates() {
 	}
 }
 
-int count = 0;
+
 
 bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm)
 {	
@@ -246,7 +246,6 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	Direction dir;
 
 	LocRec temp;
-	int count = 0;	
 	if (!algorithm) {		
 		do {
 			temp = getDirectionPGreedy(ec, curr);
@@ -254,13 +253,13 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		curr = temp;	
 	} else {
 		do {
-			if (count == 10) {
+			if (COUNT == 10) {
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
-				count = 0;
+				COUNT = 0;
 			} else
-				temp = getDirectionGreedy(ec, curr);			
-		} while (!ec.IsTileValid(temp));
-		count++;
+				temp = getDirectionGreedy(ec, curr);
+			COUNT++;
+		} while (!ec.IsTileValid(temp));		
 	}
 	curr = temp;
 	return true;
