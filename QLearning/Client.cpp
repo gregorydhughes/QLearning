@@ -232,6 +232,8 @@ void initQStates() {
 	}
 }
 
+int count = 0;
+
 bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm)
 {	
 	path.push_back(curr);
@@ -252,9 +254,9 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		curr = temp;	
 	} else {
 		do {
-			if (count > 1) {
-				cout << "no max" << endl;
+			if (count == 10) {
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+				count = 0;
 			} else
 				temp = getDirectionGreedy(ec, curr);
 			count++;
@@ -472,8 +474,5 @@ double getMaxQ(QValueRec currState) {
 }
 
 double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
-	double updatedQ = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);
-	if (reward > 0.0)
-		updatedQ += 0.01;
-	return updatedQ;
+	return (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);	
 }
