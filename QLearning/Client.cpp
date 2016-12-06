@@ -58,7 +58,7 @@ int main()
 
 	for (int i = 0; i < EPOCHS; i++)
 	{
-		cout << "Epoch: " << i << endl;
+		//cout << "Epoch: " << i << endl;
 		EnvironmentClass ec;
 
 		ReadFile(ec);
@@ -264,6 +264,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		else {
 			do {
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+				cout << "hereto" << endl;
 			} while (!ec.IsTileValid(temp));
 			prevLocs.clear();
 			prevLocs.push_back(temp);
@@ -291,7 +292,6 @@ LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 		qStates[curr.rowY][curr.colX].QSouthWest,
 		qStates[curr.rowY][curr.colX].QSouthEast
 	};
-	cout << "here" << endl;
 	if (getSumQ(qStates[curr.rowY][curr.colX]) <= 0.0)
 		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 
