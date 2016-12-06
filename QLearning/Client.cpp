@@ -104,7 +104,7 @@ int main()
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
 		dout << endl << endl << endl;
-
+		system("pause");
 		path.clear();
 	}
 	dout.close();
@@ -251,7 +251,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	if (!algorithm) {
 		LocRec temp;
 		do {
-			temp = getDirectionPGreedy(currState, ec, curr);
+			temp = getDirectionGreedy(currState, ec, curr);
 		} while (!ec.IsTileValid(temp));
 		curr = temp;		
 	} else
