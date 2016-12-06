@@ -260,13 +260,12 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		} while (!ec.IsTileValid(temp));
 
 		if (!isLooping(temp)) {
-			cout << "here first" << endl;
 			prevLocs.push_back(temp);
 		} else {
 			int count = 0;
 			do {
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
-				cout << "hereto" << endl;
+				temp = getNewLoc(temp, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 			} while (!ec.IsTileValid(temp));
 			prevLocs.clear();
 			prevLocs.push_back(temp);
