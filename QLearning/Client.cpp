@@ -271,6 +271,15 @@ LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec c
 		currState->QSouthEast
 	};
 
+	cout << currState->QNorth << endl;
+	cout << currState->QSouth << endl;
+	cout << currState->QWest << endl;
+	cout << currState->QEast << endl;
+	cout << currState->QNorthWest << endl;
+	cout << currState->QNorthEast << endl;
+	cout << currState->QSouthWest << endl;
+	cout << currState->QSouthEast << endl;
+
 	int max = 0;
 	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (values[max] < values[i])
