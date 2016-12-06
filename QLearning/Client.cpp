@@ -376,69 +376,44 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 
 void calculateQLearnValues(RewardsRec currRewards, QValueRec *currState, QValueRec *nextState, Direction dir) {
 	double maxQ = getMaxQ(nextState);
-	double weight;
 	switch (dir) {
 	case TRUE_NORTH:
-		weight = currState->weigthNorth;
-		if (currRewards.rNorth < 0)
-			weight = 1.0;
-		currState->QNorth += calculateQLearnValue(weight, currState->QNorth, maxQ, currRewards.rNorth);
+		currState->QNorth += calculateQLearnValue(currState->weigthNorth, currState->QNorth, maxQ, currRewards.rNorth);
 		if (currState->weigthNorth > 0.0)
 			currState->weigthNorth -= .001;
 		break;
 	case TRUE_SOUTH:
-		weight = currState->weigthSouth;
-		if (currRewards.rSouth < 0)
-			weight = 1.0;
-		currState->QSouth += calculateQLearnValue(weight, currState->QSouth, maxQ, currRewards.rSouth);
+		currState->QSouth += calculateQLearnValue(currState->weigthSouth, currState->QSouth, maxQ, currRewards.rSouth);
 		if (currState->weigthSouth > 0.0)
 			currState->weigthSouth -= .001;
 		break;
 	case TRUE_WEST:
-		weight = currState->weigthWest;
-		if (currRewards.rWest < 0)
-			weight = 1.0;
-		currState->QWest += calculateQLearnValue(weight, currState->QWest, maxQ, currRewards.rWest);
+		currState->QWest += calculateQLearnValue(currState->weigthWest, currState->QWest, maxQ, currRewards.rWest);
 		if (currState->weigthWest > 0.0)
 			currState->weigthWest -= .001;
 		break;
 	case TRUE_EAST:
-		weight = currState->weigthEast;
-		if (currRewards.rEast < 0)
-			weight = 1.0;
-		currState->QEast += calculateQLearnValue(weight, currState->QEast, maxQ, currRewards.rEast);
+		currState->QEast += calculateQLearnValue(currState->weigthEast, currState->QEast, maxQ, currRewards.rEast);
 		if (currState->weigthEast > 0.0)
 			currState->weigthEast -= .001;
 		break;
 	case NORTH_WEST:
-		weight = currState->weigthNorthWest;
-		if (currRewards.rNorthWest < 0)
-			weight = 1.0;
-		currState->QNorthWest += calculateQLearnValue(weight, currState->QNorthWest, maxQ, currRewards.rNorthWest);
+		currState->QNorthWest += calculateQLearnValue(currState->weigthNorthWest, currState->QNorthWest, maxQ, currRewards.rNorthWest);
 		if (currState->weigthNorthWest > 0.0)
 			currState->weigthNorthWest -= .001;
 		break;
 	case NORTH_EAST:
-		weight = currState->weigthNorthEast;
-		if (currRewards.rNorthEast < 0)
-			weight = 1.0;
-		currState->QNorthEast += calculateQLearnValue(weight, currState->QNorthEast, maxQ, currRewards.rNorthEast);
+		currState->QNorthEast += calculateQLearnValue(currState->weigthNorthEast, currState->QNorthEast, maxQ, currRewards.rNorthEast);
 		if (currState->weigthNorthEast > 0.0)
 			currState->weigthNorthEast -= .001;
 		break;
 	case SOUTH_WEST:
-		weight = currState->weigthSouthWest;
-		if (currRewards.rSouthWest < 0)
-			weight = 1.0;
-		currState->QSouthWest += calculateQLearnValue(weight, currState->QSouthWest, maxQ, currRewards.rSouthWest);
+		currState->QSouthWest += calculateQLearnValue(currState->weigthSouthWest, currState->QSouthWest, maxQ, currRewards.rSouthWest);
 		if (currState->weigthSouthWest > 0.0)
 			currState->weigthSouthWest -= .001;
 		break;
 	case SOUTH_EAST:
-		weight = currState->weigthSouthEast;
-		if (currRewards.rSouthEast < 0)
-			weight = 1.0;
-		currState->QSouthEast += calculateQLearnValue(weight, currState->QSouthEast, maxQ, currRewards.rSouthEast);
+		currState->QSouthEast += calculateQLearnValue(currState->weigthSouthEast, currState->QSouthEast, maxQ, currRewards.rSouthEast);
 		if (currState->weigthSouthEast > 0.0)
 			currState->weigthSouthEast -= .001;
 		break;
