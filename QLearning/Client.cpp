@@ -234,6 +234,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 			count++;
 		} while (!ec.IsTileValid(temp));
 	}
+	curr = temp;
 	return true;
 }
 
