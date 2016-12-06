@@ -225,9 +225,8 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		do {
 			temp = getDirectionPGreedy(currState, ec, curr);
 		} while (!ec.IsTileValid(temp));
-		curr = temp;		
-	}
-	else {
+		curr = temp;	
+	} else {
 		do {
 			if (count > 1)
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
@@ -408,6 +407,7 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 			qStates[currRow][currCol].weigthSouthEast -= .001;
 		break;
 	}
+}
 
 double getSumQ(QValueRec currState) {
 	double values[MAX_DIRECTIONS] = {
