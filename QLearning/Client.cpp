@@ -18,13 +18,11 @@ const int MAX_LOCATIONS = 400;
 
 const string INPUT_FILE = "input.dat";
 
-bool ALGORITHM = false;
-
 void ReadFile(EnvironmentClass & ec);
 
 LocRec EstablishStartingLocation(EnvironmentClass & ec);
 
-bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it);
+bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm);
 
 void calculateQLearnValues(RewardsRec currValues, QValueRec *currState, QValueRec *nextState, Direction dir);
 
@@ -74,7 +72,7 @@ int main()
 
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
 		{	reward += ec.GetValueOnLocation(currLoc);	
-			if(!MoveCurrentLocation(ec, currLoc, path, it))
+			if(!MoveCurrentLocation(ec, currLoc, path, it, false))
 				break;			
 		}
 
@@ -88,7 +86,6 @@ int main()
 	for (int i = 0; i < 1; i++)
 	{
 		EnvironmentClass ec;
-		ALGORITHM = true;
 		ReadFile(ec);
 
 		int reward = 0;
@@ -99,7 +96,7 @@ int main()
 
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
 		{	reward += ec.GetValueOnLocation(currLoc);
-			if(!MoveCurrentLocation(ec, currLoc, path, it))
+			if(!MoveCurrentLocation(ec, currLoc, path, it, true))
 				break;	
 		}
 
@@ -239,7 +236,7 @@ void initQStates() {
 	}
 }
 
-bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it)
+bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm)
 {	
 	path.push_back(curr);
 
@@ -251,7 +248,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	Direction dir;	
 	QValueRec * currState = qStates[curr.rowY][curr.colX];
 	
-	if (!ALGORITHM) {
+	if (!algorithm) {
 		LocRec temp;
 		do {
 			temp = getDirectionPGreedy(currState, ec, curr);
