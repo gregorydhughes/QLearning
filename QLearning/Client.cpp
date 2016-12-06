@@ -278,7 +278,7 @@ LocRec getDirectionGreedy(QValueRec * currState, EnvironmentClass & ec, LocRec c
 	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (values[max] < values[i])
 			max = i;
-
+	cout << "Max: " << max << endl;
 	return getNewLoc(curr, static_cast<Direction>(max));
 }
 
