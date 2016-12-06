@@ -12,7 +12,7 @@ using namespace std;
 const double EXPLORE = 0.2;
 const double ALPHA = 0.9;
 const double GAMMA = 0.5;
-const int EPOCHS = 10;
+const int EPOCHS = 1000;
 
 const int MAX_LOCATIONS = 400;
 
