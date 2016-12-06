@@ -218,17 +218,23 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 
 	Direction dir;	
 	QValueRec currState = qStates[curr.rowY][curr.colX];
-	
-	if (!algorithm) {
-		LocRec temp;
+
+	LocRec temp;
+	int count = 0;	
+	if (!algorithm) {		
 		do {
 			temp = getDirectionPGreedy(currState, ec, curr);
 		} while (!ec.IsTileValid(temp));
 		curr = temp;		
-	} else
+	}
+	else {
 		do {
-			curr = getDirectionGreedy(currState, ec, curr);
-		} while (!ec.IsTileValid(curr));
+			if (count > 1)
+				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+			else
+				temp = getDirectionGreedy(currState, ec, curr);
+		} while (!ec.IsTileValid(temp));
+	}
 	return true;
 }
 
@@ -402,15 +408,6 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 			qStates[currRow][currCol].weigthSouthEast -= .001;
 		break;
 	}
-	/*cout << qStates[currRow][currCol].QNorth << endl;
-	cout << qStates[currRow][currCol].QSouth << endl;
-	cout << qStates[currRow][currCol].QWest << endl;
-	cout << qStates[currRow][currCol].QEast << endl;
-	cout << qStates[currRow][currCol].QNorthWest << endl;
-	cout << qStates[currRow][currCol].QNorthEast << endl;
-	cout << qStates[currRow][currCol].QSouthWest << endl;
-	cout << qStates[currRow][currCol].QSouthEast << endl;*/
-}
 
 double getSumQ(QValueRec currState) {
 	double values[MAX_DIRECTIONS] = {
