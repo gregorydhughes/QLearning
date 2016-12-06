@@ -258,9 +258,9 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 				count = 0;
 			} else
-				temp = getDirectionGreedy(ec, curr);
-			count++;
+				temp = getDirectionGreedy(ec, curr);			
 		} while (!ec.IsTileValid(temp));
+		count++;
 	}
 	curr = temp;
 	return true;
