@@ -10,7 +10,7 @@
 using namespace std;
 
 const double EXPLORE = 0.2;
-const double ALPHA = 0.1;
+const double ALPHA = 0.9;
 const double GAMMA = 0.5;
 const int EPOCHS = 10000;
 
@@ -203,9 +203,10 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 
 	LocRec ans;
 
-	ans.colX = (rand() % s) + 1;
-
-	ans.rowY = (rand() % s) + 1;
+	do {
+		ans.colX = (rand() % s) + 1;
+		ans.rowY = (rand() % s) + 1;
+	} while (ec.HasTroll(ans));
 
 	return ans;
 }
