@@ -43,6 +43,8 @@ void initQStates();
 
 bool isLooping(LocRec check);
 
+void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path);
+
 int main()
 {
 	LocRec currLoc;
@@ -92,11 +94,17 @@ int main()
 		vector<LocRec>::iterator it = path.begin();
 
 		currLoc = EstablishStartingLocation(ec);
-
+		int count = 0;
 		while (ec.GetLocationInformation(currLoc).isEscape == false)
-		{	reward += ec.GetValueOnLocation(currLoc);
+		{	
+			if (count >= 100) {
+				randomMove(ec, currLoc, path);
+				count = 0;
+			}
+			reward += ec.GetValueOnLocation(currLoc);
 			if(!MoveCurrentLocation(ec, currLoc, path, it, true))
 				break;	
+			count++;			
 		}
 
 		dout << "Reward: " << reward << endl;
@@ -262,10 +270,8 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		if (!isLooping(temp)) {
 			prevLocs.push_back(temp);
 		} else {
-			int count = 0;
 			do {
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
-				temp = getNewLoc(temp, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 			} while (!ec.IsTileValid(temp));
 			prevLocs.clear();
 			prevLocs.push_back(temp);
@@ -273,6 +279,16 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	}
 	curr = temp;
 	return true;
+}
+
+void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path)
+{	
+	path.push_back(curr);
+	LocRec temp;
+	do {
+		temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+	} while (!ec.IsTileValid(temp));
+	curr = temp;
 }
 
 bool isLooping(LocRec check) {
