@@ -227,7 +227,9 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 		} while (!ec.IsTileValid(temp));
 		curr = temp;		
 	} else
-		curr = getDirectionGreedy(currState, ec, curr);
+		do {
+			curr = getDirectionGreedy(currState, ec, curr);
+		} while (!ec.IsTileValid(curr));
 	return true;
 }
 
@@ -252,14 +254,16 @@ LocRec getDirectionGreedy(QValueRec currState, EnvironmentClass & ec, LocRec cur
 	cout << currState.QSouthWest << endl;
 	cout << currState.QSouthEast << endl;
 
+	if (getSumQ(currState) == 0.0)
+		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+
 	int max = 0;
 	for (int i = 0; i < MAX_DIRECTIONS; i++) {
 		cout << "Max: " << max << endl;
 		cout << "Values[i]: " << values[i] << endl;
 		if (values[max] < values[i])
 			max = i;
-	}
-	
+	}	
 	return getNewLoc(curr, static_cast<Direction>(max));
 }
 
