@@ -18,7 +18,7 @@ const int MAX_LOCATIONS = 400;
 
 const string INPUT_FILE = "input.dat";
 
-string ALGORITHM = "";
+bool ALGORITHM = false;
 
 void ReadFile(EnvironmentClass & ec);
 
@@ -88,7 +88,7 @@ int main()
 	for (int i = 0; i < 1; i++)
 	{
 		EnvironmentClass ec;
-		ALGORITHM = "GREEDY";
+		ALGORITHM = true;
 		ReadFile(ec);
 
 		int reward = 0;
@@ -251,7 +251,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	Direction dir;	
 	QValueRec * currState = qStates[curr.rowY][curr.colX];
 	
-	if (ALGORITHM.compare("GREEDY") == 0) {
+	if (!ALGORITHM) {
 		LocRec temp;
 		do {
 			temp = getDirectionPGreedy(currState, ec, curr);
