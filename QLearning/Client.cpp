@@ -10,8 +10,8 @@
 using namespace std;
 
 
-const double ALPHA = 0.9;
-const double GAMMA = 0.5;
+const double ALPHA = 0.1;
+const double GAMMA = 0.9;
 const int EPOCHS = 10000;
 double EXPLORE = 0.2;
 const int MAX_LOCATIONS = 400;
