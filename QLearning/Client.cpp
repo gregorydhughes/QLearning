@@ -292,9 +292,6 @@ LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 		qStates[curr.rowY][curr.colX].QSouthEast
 	};
 	
-	if (getSumQ(qStates[curr.rowY][curr.colX]))
-		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
-
 	int max = 0;
 	for (int i = 0; i < MAX_DIRECTIONS; i++)	
 		if (values[max] < values[i])
@@ -480,7 +477,7 @@ double getMaxQ(QValueRec currState) {
 
 double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
 	double qUpdate = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);	
-	if (reward > 0.0)
-		qUpdate += 0.01;
+	if (reward < 0.0)
+		qUpdate -= 0.01;
 	return qUpdate;
 }
