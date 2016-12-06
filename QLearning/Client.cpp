@@ -209,7 +209,7 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 }
 
 
-QValueRec * qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
+QValueRec * qStates[MAX_ROOM_SIZE + 1][MAX_ROOM_SIZE + 1];
 
 void initQStates() {
 	for (int i = 0; i < MAX_ROOM_SIZE; i++) {
