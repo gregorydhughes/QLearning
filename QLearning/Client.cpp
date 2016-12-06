@@ -10,7 +10,7 @@
 using namespace std;
 
 
-const double ALPHA = 0.9;
+const double ALPHA = 0.1;
 const double GAMMA = 0.5;
 const int EPOCHS = 10000;
 double EXPLORE = 0.2;
@@ -416,42 +416,42 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 	case TRUE_NORTH:
 		qStates[currRow][currCol].QNorth += calculateQLearnValue(qStates[currRow][currCol].weigthNorth, qStates[currRow][currCol].QNorth, maxQ, currRewards.rNorth);
 		if (qStates[currRow][currCol].weigthNorth > 0.0)
-			qStates[currRow][currCol].weigthNorth -= .001;
+			qStates[currRow][currCol].weigthNorth *= .99;
 		break;
 	case TRUE_SOUTH:
 		qStates[currRow][currCol].QSouth += calculateQLearnValue(qStates[currRow][currCol].weigthSouth, qStates[currRow][currCol].QSouth, maxQ, currRewards.rSouth);
 		if (qStates[currRow][currCol].weigthSouth > 0.0)
-			qStates[currRow][currCol].weigthSouth -= .001;
+			qStates[currRow][currCol].weigthSouth *= .99;
 		break;
 	case TRUE_WEST:
 		qStates[currRow][currCol].QWest += calculateQLearnValue(qStates[currRow][currCol].weigthWest, qStates[currRow][currCol].QWest, maxQ, currRewards.rWest);
 		if (qStates[currRow][currCol].weigthWest > 0.0)
-			qStates[currRow][currCol].weigthWest -= .001;
+			qStates[currRow][currCol].weigthWest *= .99;
 		break;
 	case TRUE_EAST:
 		qStates[currRow][currCol].QEast += calculateQLearnValue(qStates[currRow][currCol].weigthEast, qStates[currRow][currCol].QEast, maxQ, currRewards.rEast);
 		if (qStates[currRow][currCol].weigthEast > 0.0)
-			qStates[currRow][currCol].weigthEast -= .001;
+			qStates[currRow][currCol].weigthEast *= .99;
 		break;
 	case NORTH_WEST:
 		qStates[currRow][currCol].QNorthWest += calculateQLearnValue(qStates[currRow][currCol].weigthNorthWest, qStates[currRow][currCol].QNorthWest, maxQ, currRewards.rNorthWest);
 		if (qStates[currRow][currCol].weigthNorthWest > 0.0)
-			qStates[currRow][currCol].weigthNorthWest -= .001;
+			qStates[currRow][currCol].weigthNorthWest *= .99;
 		break;
 	case NORTH_EAST:
 		qStates[currRow][currCol].QNorthEast += calculateQLearnValue(qStates[currRow][currCol].weigthNorthEast, qStates[currRow][currCol].QNorthEast, maxQ, currRewards.rNorthEast);
 		if (qStates[currRow][currCol].weigthNorthEast > 0.0)
-			qStates[currRow][currCol].weigthNorthEast -= .001;
+			qStates[currRow][currCol].weigthNorthEast *= .99;
 		break;
 	case SOUTH_WEST:
 		qStates[currRow][currCol].QSouthWest += calculateQLearnValue(qStates[currRow][currCol].weigthSouthWest, qStates[currRow][currCol].QSouthWest, maxQ, currRewards.rSouthWest);
 		if (qStates[currRow][currCol].weigthSouthWest > 0.0)
-			qStates[currRow][currCol].weigthSouthWest -= .001;
+			qStates[currRow][currCol].weigthSouthWest *= .99;
 		break;
 	case SOUTH_EAST:
 		qStates[currRow][currCol].QSouthEast += calculateQLearnValue(qStates[currRow][currCol].weigthSouthEast, qStates[currRow][currCol].QSouthEast, maxQ, currRewards.rSouthEast);
 		if (qStates[currRow][currCol].weigthSouthEast > 0.0)
-			qStates[currRow][currCol].weigthSouthEast -= .001;
+			qStates[currRow][currCol].weigthSouthEast *= .99;
 		break;
 	}
 }
