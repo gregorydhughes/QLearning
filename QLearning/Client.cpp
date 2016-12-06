@@ -461,6 +461,6 @@ double getMaxQ(QValueRec *currState) {
 double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
 	double updatedQ = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);
 	if (reward < 0.0)
-		return 0.0;
+		return -500;
 	return updatedQ;
 }
