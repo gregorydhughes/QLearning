@@ -106,7 +106,6 @@ int main()
 		dout << "Reward: " << reward << endl;
 		dout << ec.ToString(path);
 		cout << ec.ToString(path);
-		system("pause");
 		dout << endl << endl << endl;
 
 		path.clear();
