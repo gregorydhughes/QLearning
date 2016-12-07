@@ -22,10 +22,10 @@ struct RewardsRec
 	double rNorthWest;			// Reward Value for moving North West
 };
 
-
+// Keeps a record of the Q values learned and their weights of influence
 struct QValueRec
 {
-	// The curret Q Values
+	// The curret Q Values for burgalars memory
 	double QNorth;				
 	double QNorthEast;			
 	double QEast;				
@@ -34,7 +34,8 @@ struct QValueRec
 	double QSouthWest;			
 	double QWest;				
 	double QNorthWest;
-	// The weight determiner
+
+	// The weight determiner for paths traveled multiple times
 	double weigthNorth;
 	double weigthNorthEast;
 	double weigthEast;

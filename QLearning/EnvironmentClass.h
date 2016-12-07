@@ -58,17 +58,22 @@ public:
 	// Sets a tile's Obstruction value
 	void SetObstructionOnLocation(LocRec loc);
 
+	// Checks if location is valid
 	bool IsTileValid(LocRec loc);
 
 	// Returns the size (length and width) of the room
 	int GetRoomSize();
-
+	
+	// check reward value of location
 	int ReturnReward(LocRec loc);
 
+	// Creates a list of neighboring rewards
 	RewardsRec ReturnNeighboringQValues(LocRec loc);
 
+	// Prints board with the burgalars locaiton
 	std::string ToString(LocRec currLoc);
 
+	// Prints board with the burgalars path
 	std::string ToString(vector<LocRec> path);
 
 private:
@@ -78,6 +83,7 @@ private:
 	// Returns a string representation of the northern and southern walls.
 	std::string GetTopAndBottomWalls();
 
+	// Predicates whether pos is in the path
 	bool LocationInVector(LocRec pos, vector<LocRec> path);
 	
 	// The Maximum room size as a record

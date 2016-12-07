@@ -8,19 +8,21 @@
 
 #include "EnvironmentClass.h"
 
-
+// DC - Default constuctor
 EnvironmentClass::EnvironmentClass()
 {
 	environmentSize = MAX_ROOM_SIZE;
 	BuildRoom(MAX_ROOM_SIZE);
 }
 
+// NDC - Non-Default Constructor
 EnvironmentClass::EnvironmentClass(int size, double a, double g)
 {
 	environmentSize = size;
 	BuildRoom(size);
 }
 
+// Fills the 2-d array of the room for both the DC and the NDC
 void EnvironmentClass::BuildRoom(int size)
 {
 	for (int i = 0; i < ROOM_SIZE_WITH_BORDERS; i++)
@@ -44,11 +46,13 @@ void EnvironmentClass::BuildRoom(int size)
 	}
 }
 
+// Returns the percepts to the vBot on location
 TileRec EnvironmentClass::GetLocationInformation(LocRec loc)
 {
 	return room[loc.rowY][loc.colX];
 }
 
+// Returns the value for a move on location
 int EnvironmentClass::GetValueOnLocation(LocRec loc)
 {
 	if (room[loc.rowY][loc.colX].hasPony)
@@ -61,6 +65,7 @@ int EnvironmentClass::GetValueOnLocation(LocRec loc)
 		return REWARD_FOR_MOVE;
 }
 
+// Predicates if there is a pony on location
 bool EnvironmentClass::HasPony(LocRec loc)
 {
 	if (room[loc.rowY][loc.colX].hasPony)
@@ -68,6 +73,7 @@ bool EnvironmentClass::HasPony(LocRec loc)
 	return false;
 }
 
+// Predicates if there is a troll on location
 bool EnvironmentClass::HasTroll(LocRec loc)
 {
 	if (room[loc.rowY][loc.colX].hasTroll)
@@ -75,41 +81,49 @@ bool EnvironmentClass::HasTroll(LocRec loc)
 	return false;
 }
 
+// vacuums a tile
 void EnvironmentClass::FreePony(LocRec loc)
 {
 	room[loc.rowY][loc.colX].hasPony = false;
 }
 
+// Sets a tile's dirt value
 void EnvironmentClass::SetPonyOnLocation(LocRec loc)
 {
 	room[loc.rowY][loc.colX].hasPony = true;
 }
 
+// Sets a tile's furniture value
 void EnvironmentClass::SetTrollOnLocation(LocRec loc)
 {
 	room[loc.rowY][loc.colX].hasTroll = true;
 }
 
+// Sets a tile's goal value
 void EnvironmentClass::SetEscapeOnLocation(LocRec loc)
 {
 	room[loc.rowY][loc.colX].isEscape = true;
 }
 
+// Sets a tile's Obstruction value
 void EnvironmentClass::SetObstructionOnLocation(LocRec loc)
 {
 	room[loc.rowY][loc.colX].isObstructed = true;
 }
 
+// Checks if location is valid
 bool EnvironmentClass::IsTileValid(LocRec loc)
 {
 	return room[loc.rowY][loc.colX].isValid;
 }
 
+// Returns the size (length and width) of the room
 int EnvironmentClass::GetRoomSize()
 {
 	return environmentSize;
 }
 
+// check reward value of location
 int EnvironmentClass::ReturnReward(LocRec loc)
 {
 	if (room[loc.rowY][loc.colX].hasPony)
@@ -122,6 +136,7 @@ int EnvironmentClass::ReturnReward(LocRec loc)
 		return REWARD_FOR_MOVE;
 }
 
+// Creates a list of neighboring rewards
 RewardsRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
 {
 	RewardsRec ans;
@@ -165,6 +180,7 @@ RewardsRec EnvironmentClass::ReturnNeighboringQValues(LocRec loc)
 	return ans;
 }
 
+// Prints board with the burgalars location
 std::string EnvironmentClass::ToString(LocRec currLoc)
 {
 	std::string ans = "";
@@ -220,6 +236,7 @@ std::string EnvironmentClass::ToString(LocRec currLoc)
 	return ans;
 }
 
+// Prints board with the burgalars path
 std::string EnvironmentClass::ToString(vector<LocRec> path)
 {
 	std::string ans = "";
@@ -280,6 +297,7 @@ std::string EnvironmentClass::ToString(vector<LocRec> path)
 	return ans;
 }
 
+// Returns a string representation of the northern and southern walls.
 std::string EnvironmentClass::GetTopAndBottomWalls()
 {
 	std::string ans = "";
@@ -292,6 +310,7 @@ std::string EnvironmentClass::GetTopAndBottomWalls()
 	return ans;
 }
 
+// Predicates whether pos is in the path
 bool EnvironmentClass::LocationInVector(LocRec pos, vector<LocRec> path)
 {
 	for (int i = 0; i < path.size(); i++)

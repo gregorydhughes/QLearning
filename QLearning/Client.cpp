@@ -9,41 +9,101 @@
 
 using namespace std;
 
-
+// learning rate
 const double ALPHA = 0.9;
+
+// discoutn factor
 const double GAMMA = 0.5;
+
+// learning runs
 const int EPOCHS = 10000;
+
+// Chance to explore
 double EXPLORE = 0.2;
+
+// Max board size
 const int MAX_LOCATIONS = 400;
+
+// the input file
 const string INPUT_FILE = "input.dat";
 
+// Agents memory banks
+QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
+
+// Pathing to check for loops
+vector<LocRec> prevLocs = vector<LocRec>();
+
+// Parameters: ec - the enviroment the agent explores
+// Post-Condition: builds the enviroment
 void ReadFile(EnvironmentClass & ec);
 
-LocRec EstablishStartingLocation(EnvironmentClass & ec);
-
-bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm);
-
-void updateQLearnValues(RewardsRec currValues, int currRow, int currCol, int row, int col, Direction dir);
-
-LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr);
-
-double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward);
-
-double getMaxQ(QValueRec currState);
-
-LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr);
-
-LocRec getNewLoc(LocRec temp, Direction dir);
-
-double getSumQ(QValueRec currState);
-
-int stringToInt(string s);
-
+// Post-Condition: initializes the agents q-learning memory banks
 void initQStates();
 
+// Parameters: ec - the enviroment the agent explores
+// Returns: a LocRec of the starting space
+LocRec EstablishStartingLocation(EnvironmentClass & ec);
+
+// Parameters:        ec - the enviroment the agent explores
+//	            curr - the current location of the agent
+//	           &path - the path the agent has traveled so far
+//             algorithm - a boolean for whether to use greedy of p greedy
+// Returns: a boolean of whether the move was successful
+bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, bool algorithm);
+
+// Parameters:   ec - the enviroment the agent explores
+//	       curr - the current location of the agent
+// Returns: a LocRec for the next move
+LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr);
+
+// Parameters:   ec - the enviroment the agent explores
+//	       curr - the current location of the agent
+// Returns: a LocRec for the next possible move
+LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr);
+
+// Parameters: temp - the LocRec to build the new move from
+//		dir - the new direction to move
+// Returns: a new LocRec to be tested
+LocRec getNewLoc(LocRec temp, Direction dir);
+
+// Parameters:        ec - the enviroment the agent explores
+//	            curr - the current location of the agent
+//	           &path - the path the agent has traveled so far
+// Post-Condition: causes the agent to randomly move
+void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path);
+
+// Parameters: currRewards - the current set of available rewards
+// 		   currRow - the current row the agent is in
+//		   currCol - the current column the agent is in
+//		       row - the new row the agent will move to
+//		       col - new new col the agent will move to
+//	               dir - the direction the agent will be moving in
+// Post-Condition: updates the q value between current state and next state
+void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int row, int col, Direction dir);
+
+// Parameters: lWeigth - the weight the current update will have, decreases over times traveled
+//		  qVal - the current q value
+//		  qMax - the max q value of the next state
+//		reward - the reward for traveling to the next state
+// Returns: a double of the new value to add q
+double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward);
+
+// Parameters: currState - the current state q values
+// Returns: the sum of all the Qs
+double getSumQ(QValueRec currState);
+
+// Parameters: currState - the current state q values
+// Returns: the max q of the state
+double getMaxQ(QValueRec currState);
+
+// Parameters:	check - agents current location
+// Returns: returns a boolean for if the agent is looping
 bool isLooping(LocRec check);
 
-void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path);
+// Parameters: s - an int in string form
+// Returns: a string in int form
+int stringToInt(string s);
+
 
 int main()
 {
@@ -74,7 +134,7 @@ int main()
 		while (!ec.GetLocationInformation(currLoc).isEscape)
 		{	
 			reward += ec.GetValueOnLocation(currLoc);	
-			if(!MoveCurrentLocation(ec, currLoc, path, it, false))
+			if(!MoveCurrentLocation(ec, currLoc, path, false))
 				break;			
 		}
 		dout << "Reward: " << reward << endl;
@@ -102,7 +162,7 @@ int main()
 				count = 0;
 			}
 			reward += ec.GetValueOnLocation(currLoc);
-			if(!MoveCurrentLocation(ec, currLoc, path, it, true))
+			if(!MoveCurrentLocation(ec, currLoc, path, true))
 				break;	
 			count++;			
 		}
@@ -118,14 +178,8 @@ int main()
 	return 0;
 }
 
-
-int stringToInt(string s) {
-    std::stringstream ss(s);
-    int x;
-    ss >> x;
-    return x;
-}
-
+// Parameters: ec - the enviroment the agent explores
+// Post-Condition: builds the enviroment
 void ReadFile(EnvironmentClass & ec)
 {
 	ifstream din;
@@ -200,23 +254,7 @@ void ReadFile(EnvironmentClass & ec)
 
 }
 
-LocRec EstablishStartingLocation(EnvironmentClass & ec)
-{
-	int s = ec.GetRoomSize();
-
-	LocRec ans;
-
-	do {
-		ans.colX = (rand() % s) + 1;
-		ans.rowY = (rand() % s) + 1;
-	} while (ec.HasTroll(ans));
-
-	return ans;
-}
-
-
-QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
-
+// Post-Condition: initializes the agents q-learning memory banks
 void initQStates() {
 	for (int i = 0; i < MAX_ROOM_SIZE; i++) {
 		for (int j = 0; j < MAX_ROOM_SIZE; j++) {
@@ -241,11 +279,28 @@ void initQStates() {
 	}
 }
 
+// Parameters: ec - the enviroment the agent explores
+// Returns: a LocRec of the starting space
+LocRec EstablishStartingLocation(EnvironmentClass & ec)
+{
+	int s = ec.GetRoomSize();
 
+	LocRec ans;
 
-vector<LocRec> prevLocs = vector<LocRec>();
+	do {
+		ans.colX = (rand() % s) + 1;
+		ans.rowY = (rand() % s) + 1;
+	} while (ec.HasTroll(ans));
 
-bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, vector<LocRec>::iterator & it, bool algorithm)
+	return ans;
+}
+
+// Parameters:        ec - the enviroment the agent explores
+//	            curr - the current location of the agent
+//	           &path - the path the agent has traveled so far
+//             algorithm - a boolean for whether to use greedy of p greedy
+// Returns: a boolean of whether the move was successful
+bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, bool algorithm)
 {	
 	path.push_back(curr);
 
@@ -281,43 +336,9 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	return true;
 }
 
-void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path) {	
-	path.push_back(curr);
-	LocRec temp;
-	do {
-		temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
-	} while (!ec.IsTileValid(temp));
-	curr = temp;
-}
-
-bool isLooping(LocRec check) {
-	for (int i = 0; i < prevLocs.size(); i++)
-		if (prevLocs[i] == check)
-			return true;
-	return false;	
-}
-
-LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
-	double values[MAX_DIRECTIONS] = {
-		qStates[curr.rowY][curr.colX].QNorth,
-		qStates[curr.rowY][curr.colX].QSouth,
-		qStates[curr.rowY][curr.colX].QWest,
-		qStates[curr.rowY][curr.colX].QEast,
-		qStates[curr.rowY][curr.colX].QNorthWest,
-		qStates[curr.rowY][curr.colX].QNorthEast,
-		qStates[curr.rowY][curr.colX].QSouthWest,
-		qStates[curr.rowY][curr.colX].QSouthEast
-	};
-	if (getSumQ(qStates[curr.rowY][curr.colX]) <= 0.0)
-		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
-
-	int max = 0;
-	for (int i = 0; i < MAX_DIRECTIONS; i++)	
-		if (values[max] < values[i])
-			max = i;
-	return getNewLoc(curr, static_cast<Direction>(max));
-}
-
+// Parameters:   ec - the enviroment the agent explores
+//	       curr - the current location of the agent
+// Returns: a LocRec for the next move
 LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 	double values[MAX_DIRECTIONS] = {
 						qStates[curr.rowY][curr.colX].QNorth,
@@ -376,6 +397,33 @@ LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 	return temp;
 }
 
+// Parameters:   ec - the enviroment the agent explores
+//	       curr - the current location of the agent
+// Returns: a LocRec for the next possible move
+LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
+	double values[MAX_DIRECTIONS] = {
+		qStates[curr.rowY][curr.colX].QNorth,
+		qStates[curr.rowY][curr.colX].QSouth,
+		qStates[curr.rowY][curr.colX].QWest,
+		qStates[curr.rowY][curr.colX].QEast,
+		qStates[curr.rowY][curr.colX].QNorthWest,
+		qStates[curr.rowY][curr.colX].QNorthEast,
+		qStates[curr.rowY][curr.colX].QSouthWest,
+		qStates[curr.rowY][curr.colX].QSouthEast
+	};
+	if (getSumQ(qStates[curr.rowY][curr.colX]) <= 0.0)
+		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+
+	int max = 0;
+	for (int i = 0; i < MAX_DIRECTIONS; i++)	
+		if (values[max] < values[i])
+			max = i;
+	return getNewLoc(curr, static_cast<Direction>(max));
+}
+
+// Parameters: temp - the LocRec to build the new move from
+//		dir - the new direction to move
+// Returns: a new LocRec to be tested
 LocRec getNewLoc(LocRec temp, Direction dir) {
 	switch (dir) {
 	case TRUE_NORTH:
@@ -410,6 +458,26 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 	return temp;
 }
 
+// Parameters:        ec - the enviroment the agent explores
+//	            curr - the current location of the agent
+//	           &path - the path the agent has traveled so far
+// Post-Condition: causes the agent to randomly move
+void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path) {	
+	path.push_back(curr);
+	LocRec temp;
+	do {
+		temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
+	} while (!ec.IsTileValid(temp));
+	curr = temp;
+}
+
+// Parameters: currRewards - the current set of available rewards
+// 		   currRow - the current row the agent is in
+//		   currCol - the current column the agent is in
+//		       row - the new row the agent will move to
+//		       col - new new col the agent will move to
+//	               dir - the direction the agent will be moving in
+// Post-Condition: updates the q value between current state and next state
 void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int nextRow, int nextCol, Direction dir) {
 	double maxQ = getMaxQ(qStates[nextRow][nextCol]);
 	switch (dir) {
@@ -456,6 +524,20 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 	}
 }
 
+// Parameters: lWeigth - the weight the current update will have, decreases over times traveled
+//		  qVal - the current q value
+//		  qMax - the max q value of the next state
+//		reward - the reward for traveling to the next state
+// Returns: a double of the new value to add q
+double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
+	double qUpdate = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);	
+	if (reward < 0.0)
+		qUpdate -= 0.01;
+	return qUpdate;
+}
+
+// Parameters: currState - the current state q values
+// Returns: the sum of all the Qs
 double getSumQ(QValueRec currState) {
 	double values[MAX_DIRECTIONS] = {
 		currState.QNorth,
@@ -471,10 +553,11 @@ double getSumQ(QValueRec currState) {
 	double sum = 0.0;
 	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		sum += values[i];
-
 	return sum;
 }
 
+// Parameters: currState - the current state q values
+// Returns: the max q of the state
 double getMaxQ(QValueRec currState) {
 	double values[MAX_DIRECTIONS] = {
 		currState.QNorth,
@@ -494,9 +577,20 @@ double getMaxQ(QValueRec currState) {
 	return maxQ;
 }
 
-double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
-	double qUpdate = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);	
-	if (reward < 0.0)
-		qUpdate -= 0.01;
-	return qUpdate;
+// Parameters:	check - agents current location
+// Returns: returns a boolean for if the agent is looping
+bool isLooping(LocRec check) {
+	for (int i = 0; i < prevLocs.size(); i++)
+		if (prevLocs[i] == check)
+			return true;
+	return false;	
+}
+
+// Parameters: s - an int in string form
+// Returns: a string in int form
+int stringToInt(string s) {
+    std::stringstream ss(s);
+    int x;
+    ss >> x;
+    return x;
 }
