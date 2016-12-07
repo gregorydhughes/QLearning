@@ -10,7 +10,7 @@
 using namespace std;
 
 // learning rate
-const double ALPHA = 0.9;
+const double ALPHA = 0.75;
 
 // discoutn factor
 const double GAMMA = 0.5;
@@ -25,7 +25,7 @@ double EXPLORE = 0.2;
 const int MAX_LOCATIONS = 400;
 
 // the input file
-const string INPUT_FILE = "input.dat";
+const string INPUT_FILE = "in.dat";
 
 // Agents memory banks
 QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
