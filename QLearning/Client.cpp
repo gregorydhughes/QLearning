@@ -25,7 +25,7 @@ double EXPLORE = 0.2;
 const int MAX_LOCATIONS = 400;
 
 // the input file
-const string INPUT_FILE = "maxin.dat";
+const string INPUT_FILE = "in.dat";
 
 // Agents memory banks
 QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
@@ -134,7 +134,7 @@ int main()
 				break;
 		}
 
-		cout << i << endl;
+		//cout << i << endl;
 
 		//system("cls");
 
@@ -188,20 +188,20 @@ void ReadFile(EnvironmentClass & ec)
 	// Get line one from file.
 	getline(din, line);
 
-	stringstream ss(line);
+	std::stringstream ss1(line);
 
-	ss >> n >> t >> p;
+	ss1 >> n >> t >> p;
 
-	ss.clear();
+	ss1.clear();
 
 	// get line two from file
 	getline(din, line);
 
-	ss = stringstream(line);
+	std::stringstream ss2(line);
 
-	ss >> temp.colX >> temp.rowY;
+	ss2 >> temp.colX >> temp.rowY;
 
-	ss.clear();
+	ss2.clear();
 
 	ec = EnvironmentClass(n, ALPHA, GAMMA);
 
@@ -209,17 +209,17 @@ void ReadFile(EnvironmentClass & ec)
 
 	getline(din, line);
 
-	ss = stringstream(line);
+	std::stringstream ss3(line);
 
 	// get line three from file
 	for (int i = 0; i < p; i++)
 	{
-		ss >> temp.colX >> temp.rowY;
+		ss3 >> temp.colX >> temp.rowY;
 
 		ec.SetPonyOnLocation(temp);
 	}
 
-	ss.clear();
+	ss3.clear();
 
 	//get line 4 from file (obsticles
 	string tempStr;
@@ -228,19 +228,19 @@ void ReadFile(EnvironmentClass & ec)
 
 	getline(din, line);
 
-	ss = stringstream(line);
+	std::stringstream ss4(line);
 
-	while (ss.rdbuf()->in_avail() > 0)
+	while (ss4.rdbuf()->in_avail() > 0)
 	{
 		numbersFound++;
 
-		ss >> temp.colX >> temp.rowY;
+		ss4 >> temp.colX >> temp.rowY;
 
 		if (temp.colX > 0 && temp.rowY > 0)
 			ec.SetObstructionOnLocation(temp);
 	}
 
-	ss.clear();
+	ss4.clear();
 
 	// get line 5 from file
 	for (int i = 0; i < t; i++)
