@@ -25,7 +25,7 @@ double EXPLORE = 0.2;
 const int MAX_LOCATIONS = 400;
 
 // the input file
-const string INPUT_FILE = "in.dat";
+const string INPUT_FILE = "maxin.dat";
 
 // Agents memory banks
 QValueRec qStates[MAX_ROOM_SIZE][MAX_ROOM_SIZE];
@@ -116,63 +116,56 @@ int main()
 	dout.open("output.txt");
 
 	vector<LocRec> path = vector<LocRec>();
-	vector<LocRec>::iterator it = path.begin();
 
 	for (int i = 0; i < EPOCHS; i++)
 	{
-		//cout << "Epoch: " << i << endl;
 		EnvironmentClass ec;
 
 		ReadFile(ec);
 
 		int reward = 0;
-
-		vector<LocRec>::iterator it = path.begin();
 
 		currLoc = EstablishStartingLocation(ec);
 
 		while (!ec.GetLocationInformation(currLoc).isEscape)
-		{	
-			reward += ec.GetValueOnLocation(currLoc);	
-			if(!MoveCurrentLocation(ec, currLoc, path, false))
-				break;			
-		}
-		dout << "Reward: " << reward << endl;
-		dout << ec.ToString(path);
-		dout << endl << endl << endl;
-
-		path.clear();
-	}
-
-	for (int i = 0; i < 1; i++)
-	{
-		EnvironmentClass ec;
-		ReadFile(ec);
-
-		int reward = 0;
-
-		vector<LocRec>::iterator it = path.begin();
-
-		currLoc = EstablishStartingLocation(ec);
-		int count = 0;
-		while (ec.GetLocationInformation(currLoc).isEscape == false)
-		{	
-			if (count >= 50) {
-				randomMove(ec, currLoc, path);
-				count = 0;
-			}
+		{
 			reward += ec.GetValueOnLocation(currLoc);
-			if(!MoveCurrentLocation(ec, currLoc, path, true))
-				break;	
-			count++;			
+			if (!MoveCurrentLocation(ec, currLoc, path, false))
+				break;
 		}
 
-		dout << "Reward: " << reward << endl;
-		dout << ec.ToString(path);
-		cout << ec.ToString(path);
-		dout << endl << endl << endl;
+		cout << i << endl;
+
+		//system("cls");
+
 		path.clear();
 	}
+
+	EnvironmentClass ec;
+	ReadFile(ec);
+
+	int reward = 0;
+
+	currLoc = EstablishStartingLocation(ec);
+	int count = 0;
+	while (ec.GetLocationInformation(currLoc).isEscape == false)
+	{
+		if (count >= 50) {
+			randomMove(ec, currLoc, path);
+			count = 0;
+		}
+		reward += ec.GetValueOnLocation(currLoc);
+		if (!MoveCurrentLocation(ec, currLoc, path, true))
+			break;
+		count++;
+	}
+
+	dout << "Reward: " << reward << endl;
+	dout << ec.ToString(path);
+	cout << ec.ToString(path);
+	dout << endl << endl << endl;
+	path.clear();
+
 	dout.close();
 
 	return 0;
@@ -188,61 +181,66 @@ void ReadFile(EnvironmentClass & ec)
 
 	int n, t, p;
 
+	string line;
+
 	LocRec temp;
 
 	// Get line one from file.
-	din >> n >> t >> p;
+	getline(din, line);
+
+	stringstream ss(line);
+
+	ss >> n >> t >> p;
+
+	ss.clear();
 
 	// get line two from file
-	din >> temp.colX >> temp.rowY;
+	getline(din, line);
+
+	ss = stringstream(line);
+
+	ss >> temp.colX >> temp.rowY;
+
+	ss.clear();
 
 	ec = EnvironmentClass(n, ALPHA, GAMMA);
 
 	ec.SetEscapeOnLocation(temp);
 
+	getline(din, line);
+
+	ss = stringstream(line);
 
 	// get line three from file
 	for (int i = 0; i < p; i++)
 	{
-		din >> temp.colX >> temp.rowY;
+		ss >> temp.colX >> temp.rowY;
 
 		ec.SetPonyOnLocation(temp);
 	}
 
+	ss.clear();
 
-	//get line 4 from file
+	//get line 4 from file (obsticles
 	string tempStr;
-
-	getline(din, tempStr);
-
-	int obstructionArr[MAX_LOCATIONS];
-
-	string num = "";
 
 	int numbersFound = 0;
 
-	for (int i = 0; i < tempStr.length(); i++)
+	getline(din, line);
+
+	ss = stringstream(line);
+
+	while (ss.rdbuf()->in_avail() > 0)
 	{
-		if (tempStr[i] == ' ')
-		{
-			numbersFound++;
+		numbersFound++;
 
-			if (numbersFound % 2 == 0)
-			{
-				temp.rowY = stringToInt(num);
+		ss >> temp.colX >> temp.rowY;
 
-				if (temp.rowY != -1 && temp.colX != -1)
-					ec.SetObstructionOnLocation(temp);
-			}
-			else
-				temp.colX = stringToInt(num);
-
-			num = "";
-		}
-		else
-			num += tempStr[i];
+		if (temp.colX > 0 && temp.rowY > 0)
+			ec.SetObstructionOnLocation(temp);
 	}
 
+	ss.clear();
 
 	// get line 5 from file
 	for (int i = 0; i < t; i++)
@@ -301,7 +299,7 @@ LocRec EstablishStartingLocation(EnvironmentClass & ec)
 //             algorithm - a boolean for whether to use greedy of p greedy
 // Returns: a boolean of whether the move was successful
 bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path, bool algorithm)
-{	
+{
 	path.push_back(curr);
 
 	if (ec.HasPony(curr))
@@ -312,19 +310,21 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 	Direction dir;
 
 	LocRec temp;
-	if (!algorithm) {		
+	if (!algorithm) {
 		do {
 			temp = getDirectionPGreedy(ec, curr);
 		} while (!ec.IsTileValid(temp));
-		curr = temp;	
-	} else {
+		curr = temp;
+	}
+	else {
 		do {
 			temp = getDirectionGreedy(ec, curr);
 		} while (!ec.IsTileValid(temp));
 
 		if (!isLooping(temp)) {
 			prevLocs.push_back(temp);
-		} else {
+		}
+		else {
 			do {
 				temp = getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 			} while (!ec.IsTileValid(temp));
@@ -342,7 +342,7 @@ bool MoveCurrentLocation(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & 
 LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 	double values[MAX_DIRECTIONS] = {
 						qStates[curr.rowY][curr.colX].QNorth,
-					    qStates[curr.rowY][curr.colX].QSouth,
+						qStates[curr.rowY][curr.colX].QSouth,
 						qStates[curr.rowY][curr.colX].QWest,
 						qStates[curr.rowY][curr.colX].QEast,
 						qStates[curr.rowY][curr.colX].QNorthWest,
@@ -355,7 +355,7 @@ LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 	LocRec temp;
 	Direction dir;
 	double checkProb = ((double)rand() / (RAND_MAX));
-	
+
 	if (getSumQ(qStates[curr.rowY][curr.colX]) == 0.0 || EXPLORE > checkProb) {
 		dir = static_cast<Direction>(rand() % MAX_DIRECTIONS);
 		temp = getNewLoc(curr, dir);
@@ -368,11 +368,12 @@ LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 		updateQLearnValues(currRewards, curr.rowY, curr.colX, temp.rowY, temp.colX, dir);
 		return temp;
 
-	} else {
-		double prob = 0.0;			
-		int action = rand() % MAX_DIRECTIONS;	
-		
-		for (int i = 0; i < MAX_DIRECTIONS; i++) {			
+	}
+	else {
+		double prob = 0.0;
+		int action = rand() % MAX_DIRECTIONS;
+
+		for (int i = 0; i < MAX_DIRECTIONS; i++) {
 			dir = static_cast<Direction>(action);
 
 			temp = getNewLoc(curr, dir);
@@ -382,9 +383,9 @@ LocRec getDirectionPGreedy(EnvironmentClass & ec, LocRec curr) {
 				if (prob > checkProb) {
 					updateQLearnValues(currRewards, curr.rowY, curr.colX, temp.rowY, temp.colX, dir);
 					return temp;
-				}				
+				}
 				if (++action == MAX_DIRECTIONS)
-					action = 0;				
+					action = 0;
 			}
 		}
 	}
@@ -415,7 +416,7 @@ LocRec getDirectionGreedy(EnvironmentClass & ec, LocRec curr) {
 		return getNewLoc(curr, static_cast<Direction>(rand() % MAX_DIRECTIONS));
 
 	int max = 0;
-	for (int i = 0; i < MAX_DIRECTIONS; i++)	
+	for (int i = 0; i < MAX_DIRECTIONS; i++)
 		if (values[max] < values[i])
 			max = i;
 	return getNewLoc(curr, static_cast<Direction>(max));
@@ -462,7 +463,7 @@ LocRec getNewLoc(LocRec temp, Direction dir) {
 //	            curr - the current location of the agent
 //	           &path - the path the agent has traveled so far
 // Post-Condition: causes the agent to randomly move
-void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path) {	
+void randomMove(EnvironmentClass & ec, LocRec & curr, vector<LocRec> & path) {
 	path.push_back(curr);
 	LocRec temp;
 	do {
@@ -530,7 +531,7 @@ void updateQLearnValues(RewardsRec currRewards, int currRow, int currCol, int ne
 //		reward - the reward for traveling to the next state
 // Returns: a double of the new value to add q
 double calculateQLearnValue(double lWeight, double qVal, double qMax, double reward) {
-	double qUpdate = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);	
+	double qUpdate = (ALPHA * lWeight) * (reward + (GAMMA * qMax) - qVal);
 	if (reward < 0.0)
 		qUpdate -= 0.01;
 	return qUpdate;
@@ -583,14 +584,14 @@ bool isLooping(LocRec check) {
 	for (int i = 0; i < prevLocs.size(); i++)
 		if (prevLocs[i] == check)
 			return true;
-	return false;	
+	return false;
 }
 
 // Parameters: s - an int in string form
 // Returns: a string in int form
 int stringToInt(string s) {
-    std::stringstream ss(s);
-    int x;
-    ss >> x;
-    return x;
+	std::stringstream ss(s);
+	int x;
+	ss >> x;
+	return x;
 }
